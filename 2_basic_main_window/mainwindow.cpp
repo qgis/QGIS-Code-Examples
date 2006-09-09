@@ -70,6 +70,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   mpMapCanvas->setVisible(true);
   mpMapCanvas->refresh();
   mpMapCanvas->show();
+  
   // Lay our widgets out in the main window
   mpLayout = new QVBoxLayout(frameMap);
   mpLayout->addWidget(mpMapCanvas);
