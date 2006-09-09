@@ -1,0 +1,77 @@
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>MainWindowBase</class>
+ <widget class="QMainWindow" name="MainWindowBase" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>579</width>
+    <height>330</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QGridLayout" >
+    <property name="margin" >
+     <number>9</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item row="0" column="0" >
+     <widget class="QFrame" name="frameMap" >
+      <property name="frameShape" >
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow" >
+       <enum>QFrame::Raised</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>579</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuMap" >
+    <property name="title" >
+     <string>Map</string>
+    </property>
+    <addaction name="actionZoom_In" />
+    <addaction name="actionZoom_Out" />
+    <addaction name="actionPan" />
+   </widget>
+   <addaction name="menuMap" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="actionZoom_In" >
+   <property name="text" >
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoom_Out" >
+   <property name="text" >
+    <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="actionPan" >
+   <property name="text" >
+    <string>Pan</string>
+   </property>
+  </action>
+ </widget>
+ <pixmapfunction></pixmapfunction>
+ <resources/>
+ <connections/>
+</ui>
