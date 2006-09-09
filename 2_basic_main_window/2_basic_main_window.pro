@@ -2,12 +2,12 @@ TEMPLATE = app
 QT = qt3support sql opengl network svg gui core xml
 LANGUAGE= C++
 linux-g++{
-  QGISDIR=/home/timlinux/apps/
+  QGISDIR=[path to installed qgis]
   QGISLIBDIR=$${QGISDIR}/lib
-  QGISSRCDIR=/home/timlinux/dev/cpp/qgis/src
+  QGISSRCDIR=[path to qgis src directory]
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
-  LIBS = -L$${QGISLIBDIR} -lqgis_composer -lqgis_core -lqgisgrass -lqgis_gui  -lqgis_legend
+  LIBS = -L$${QGISLIBDIR} -lqgis_composer -lqgis_core -lproj -lqgis_gui  -lqgis_legend
 }
 macx{
   QGISDIR=/Users/timsutton/apps/qgis.app/Contents/MacOS/
