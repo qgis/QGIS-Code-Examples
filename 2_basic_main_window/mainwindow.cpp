@@ -82,22 +82,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   mypLayer->setVisible(TRUE);
 
   // Create the Map Canvas
-  QgsMapCanvas * mypMapCanvas= new QgsMapCanvas(0, 0);
-  mypMapCanvas->setExtent(mypLayer->extent());
-  qDebug(mypMapCanvas->extent().stringRep(2));
-  mypMapCanvas->enableAntiAliasing(true);
-  mypMapCanvas->useQImageToRender(false);
-  mypMapCanvas->setCanvasColor(QColor(255, 255, 255));
-  mypMapCanvas->freeze(false);
-  mypMapCanvas->setVisible(true);
-  mypMapCanvas->refresh();
+  mpMapCanvas= new QgsMapCanvas(0, 0);
+  mpMapCanvas->setExtent(mypLayer->extent());
+  qDebug(mpMapCanvas->extent().stringRep(2));
+  mpMapCanvas->enableAntiAliasing(true);
+  mpMapCanvas->useQImageToRender(false);
+  mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
+  mpMapCanvas->freeze(false);
+  mpMapCanvas->setVisible(true);
+  mpMapCanvas->refresh();
 
   // Set the Map Canvas Layer Set
-  mypMapCanvas->setLayerSet(myLayerSet);
-  mypMapCanvas->show();
+  mpMapCanvas->setLayerSet(myLayerSet);
+  mpMapCanvas->show();
   // Lay our widgets out in the main window
-  QVBoxLayout *  mypLayout = new QVBoxLayout(frameMap);
-  mypLayout->addWidget(mypMapCanvas);
+  mpLayout = new QVBoxLayout(frameMap);
+  mpLayout->addWidget(mpMapCanvas);
 }
 
 MainWindow::~MainWindow()

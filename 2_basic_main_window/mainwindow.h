@@ -20,9 +20,11 @@
 #ifndef OMGMAINWINDOW_H
 #define OMGMAINWINDOW_H
 
+//QGis Includes
+#include <qgsmapcanvas.h>
+
 //QT Includes
 #include <QtGui>
-#include <QMainWindow>
 
 //Local Includes
 #include <ui_mainwindowbase.h>
@@ -36,6 +38,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindowBase
     public:
       MainWindow(QWidget* parent = 0, Qt::WFlags fl = 0 );
       ~MainWindow();
+    private:
+     QgsMapCanvas * mpMapCanvas;
+     QVBoxLayout  * mpLayout;
+
 };
 
 #endif
