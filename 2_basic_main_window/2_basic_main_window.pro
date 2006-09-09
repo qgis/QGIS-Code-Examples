@@ -1,4 +1,5 @@
 TEMPLATE = app
+TARGET = qgis_example2
 QT = qt3support sql opengl network svg gui core xml
 LANGUAGE= C++
 linux-g++{
@@ -7,7 +8,7 @@ linux-g++{
   QGISSRCDIR=[path to qgis src directory]
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
-  LIBS = -L$${QGISLIBDIR} -lqgis_composer -lqgis_core -lproj -lqgis_gui  -lqgis_legend
+  LIBS = -L$${QGISLIBDIR} -lqgis_core -lproj -lqgis_gui
 }
 macx{
   QGISDIR=/Users/timsutton/apps/qgis.app/Contents/MacOS/
@@ -15,22 +16,16 @@ macx{
   QGISSRCDIR=/Users/timsutton/dev/cpp/qgis/src/
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
-  LIBS = -L$${QGISLIBDIR} -lqgis_composer -lqgis_core -lqgis_gui  -lqgis_legend
+  LIBS = -L$${QGISLIBDIR} -lqgis_core -lqgis_gui
 }
 
 INCLUDEPATH = $${QGISDIR}/include/qgis \
-              $${QGISSRCDIR}/composer \
               $${QGISSRCDIR}/core \
-              $${QGISSRCDIR}/designer \
               $${QGISSRCDIR}/gui \
-              $${QGISSRCDIR}/helpviewer \
-              $${QGISSRCDIR}/legend \
-              $${QGISSRCDIR}/mac \
               $${QGISSRCDIR}/plugins \
               $${QGISSRCDIR}/providers \
               $${QGISSRCDIR}/raster \
-              $${QGISSRCDIR}/ui \
-              $${QGISSRCDIR}/widgets
+              $${QGISSRCDIR}/ui 
 
 CONFIG += qt gui exceptions stl warn_on debug thread
 
