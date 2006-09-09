@@ -18,13 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "mainwindow.h"
-#include <QAction>
-#include <QVBoxLayout>
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QString>
-#include <QToolBar>
-#include <QFrame>
 //
 // QGIS Includes
 //
@@ -35,31 +28,97 @@
 #include <qgsvectorlayer.h>
 #include <qgsmapcanvas.h>
 //
+// QGIS Map tools
+//
+#include "qgsmaptoolpan.h"
+#include "qgsmaptoolzoom.h"
+//
+// These are the other headers for available map tools (not used in this example)
+//
+//#include "qgsmaptoolcapture.h"
+//#include "qgsmaptoolidentify.h"
+//#include "qgsmaptoolselect.h"
+//#include "qgsmaptoolvertexedit.h"
+//#include "qgsmeasure.h"
+//
 // Std Includes
 //
 #include <deque.h>
-#include <iostream>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
     : QMainWindow(parent,fl)
 {
   //required by Qt4 to initialise the ui
   setupUi(this);
-#if defined(Q_WS_MAC)
-  QString myPluginsDir        = "/Users/timsutton/apps/qgis.app/Contents/MacOS/lib/qgis";
-  QString myLayerPath         = "/Users/timsutton/gisdata/brazil/BR_Cidades/";
-  QString myLayerBaseName     = "Brasil_Cap";
-  QString myProviderName      = "ogr";
-#else
-  QString myPluginsDir        = "/home/timlinux/apps/lib/qgis";
-  QString myLayerPath         = "/home/timlinux/gisdata/brazil/BR_Cidades/";
-  QString myLayerBaseName     = "Brasil_Cap";
-  QString myProviderName      = "ogr";
-#endif
 
   // Instantiate Provider Registry
+#if defined(Q_WS_MAC)
+  QString myPluginsDir        = "/Users/timsutton/apps/qgis.app/Contents/MacOS/lib/qgis";
+#else
+  QString myPluginsDir        = "/home/timlinux/apps/lib/qgis";
+#endif
   QgsProviderRegistry::instance(myPluginsDir);
 
+
+  // Create the Map Canvas
+  mpMapCanvas= new QgsMapCanvas(0, 0);
+  qDebug(mpMapCanvas->extent().stringRep(2));
+  mpMapCanvas->enableAntiAliasing(true);
+  mpMapCanvas->useQImageToRender(false);
+  mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
+  mpMapCanvas->freeze(false);
+  mpMapCanvas->setVisible(true);
+  mpMapCanvas->refresh();
+  mpMapCanvas->show();
+  // Lay our widgets out in the main window
+  mpLayout = new QVBoxLayout(frameMap);
+  mpLayout->addWidget(mpMapCanvas);
+
+  //create the action behaviours
+  connect(mActionPan, SIGNAL(triggered()), this, SLOT(panMode()));
+  connect(mActionZoomIn, SIGNAL(triggered()), this, SLOT(zoomInMode()));
+  connect(mActionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOutMode()));
+  connect(mActionAddLayer, SIGNAL(triggered()), this, SLOT(addLayer()));
+
+  //create a little toolbar
+  mpMapToolBar = addToolBar(tr("File"));
+  mpMapToolBar->addAction(mActionAddLayer);
+  mpMapToolBar->addAction(mActionZoomIn);
+  mpMapToolBar->addAction(mActionZoomOut);
+  mpMapToolBar->addAction(mActionPan);
+
+}
+
+MainWindow::~MainWindow()
+{
+
+}
+
+void MainWindow::panMode()
+{
+  QgsMapTool* mypTool = new QgsMapToolPan(mpMapCanvas);
+  mypTool->setAction(mActionPan);
+  mpMapCanvas->setMapTool(mypTool);
+
+}
+void MainWindow::zoomInMode()
+{
+  QgsMapTool* mypTool = new QgsMapToolZoom(mpMapCanvas, FALSE);
+  mypTool->setAction(mActionZoomIn);
+  mpMapCanvas->setMapTool(mypTool);
+}
+void MainWindow::zoomOutMode()
+{
+  QgsMapTool* mypTool = new QgsMapToolZoom(mpMapCanvas, FALSE);
+  mypTool->setAction(mActionZoomOut);
+  mpMapCanvas->setMapTool(mypTool);
+}
+void MainWindow::addLayer()
+{
+  QString myLayerPath         = "data";
+  QString myLayerBaseName     = "test";
+  QString myProviderName      = "ogr";
+  
   QgsVectorLayer * mypLayer = new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
   QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->vectorType());
   std::deque<QString> myLayerSet;
@@ -80,27 +139,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   // Add the Layer to the Layer Set
   myLayerSet.push_back(mypLayer->getLayerID());
   mypLayer->setVisible(TRUE);
-
-  // Create the Map Canvas
-  mpMapCanvas= new QgsMapCanvas(0, 0);
+  // set teh canvas to the extent of our layer
   mpMapCanvas->setExtent(mypLayer->extent());
-  qDebug(mpMapCanvas->extent().stringRep(2));
-  mpMapCanvas->enableAntiAliasing(true);
-  mpMapCanvas->useQImageToRender(false);
-  mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
-  mpMapCanvas->freeze(false);
-  mpMapCanvas->setVisible(true);
-  mpMapCanvas->refresh();
-
   // Set the Map Canvas Layer Set
   mpMapCanvas->setLayerSet(myLayerSet);
-  mpMapCanvas->show();
-  // Lay our widgets out in the main window
-  mpLayout = new QVBoxLayout(frameMap);
-  mpLayout->addWidget(mpMapCanvas);
 }
 
-MainWindow::~MainWindow()
-{
-
-}

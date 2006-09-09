@@ -48,30 +48,50 @@
     <property name="title" >
      <string>Map</string>
     </property>
-    <addaction name="actionZoom_In" />
-    <addaction name="actionZoom_Out" />
-    <addaction name="actionPan" />
+    <addaction name="mActionZoomIn" />
+    <addaction name="mActionZoomOut" />
+    <addaction name="mActionPan" />
+    <addaction name="mActionAddLayer" />
    </widget>
    <addaction name="menuMap" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
-  <action name="actionZoom_In" >
+  <action name="mActionZoomIn" >
+   <property name="icon" >
+    <iconset resource="resources.qrc" >:/mActionZoomIn.png</iconset>
+   </property>
    <property name="text" >
     <string>Zoom In</string>
    </property>
   </action>
-  <action name="actionZoom_Out" >
+  <action name="mActionZoomOut" >
+   <property name="icon" >
+    <iconset resource="resources.qrc" >:/mActionZoomOut.png</iconset>
+   </property>
    <property name="text" >
     <string>Zoom Out</string>
    </property>
   </action>
-  <action name="actionPan" >
+  <action name="mActionPan" >
+   <property name="icon" >
+    <iconset resource="resources.qrc" >:/mActionPan.png</iconset>
+   </property>
    <property name="text" >
     <string>Pan</string>
    </property>
   </action>
+  <action name="mActionAddLayer" >
+   <property name="icon" >
+    <iconset resource="resources.qrc" >:/mActionAddLayer.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Add Layer</string>
+   </property>
+  </action>
  </widget>
  <pixmapfunction></pixmapfunction>
- <resources/>
+ <resources>
+  <include location="resources.qrc" />
+ </resources>
  <connections/>
 </ui>

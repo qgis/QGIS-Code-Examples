@@ -38,9 +38,16 @@ class MainWindow : public QMainWindow, private Ui::MainWindowBase
     public:
       MainWindow(QWidget* parent = 0, Qt::WFlags fl = 0 );
       ~MainWindow();
+    public slots:
+      void zoomInMode();
+      void zoomOutMode();
+      void panMode();
+      void addLayer();
+      
     private:
      QgsMapCanvas * mpMapCanvas;
      QVBoxLayout  * mpLayout;
+     QToolBar * mpMapToolBar;
 
 };
 

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/" >
+        <file>mActionAddLayer.png</file>
         <file>mActionPan.png</file>
         <file>mActionZoomIn.png</file>
         <file>mActionZoomOut.png</file>
