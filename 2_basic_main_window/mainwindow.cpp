@@ -92,7 +92,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 
 MainWindow::~MainWindow()
 {
-
+  delete mpMapToolBar;
+  delete mpMapCanvas;
+  delete mpLayout;
 }
 
 void MainWindow::panMode()
@@ -104,13 +106,13 @@ void MainWindow::panMode()
 }
 void MainWindow::zoomInMode()
 {
-  QgsMapTool* mypTool = new QgsMapToolZoom(mpMapCanvas, FALSE);
+  QgsMapTool* mypTool = new QgsMapToolZoom(mpMapCanvas, FALSE); // false = in
   mypTool->setAction(mActionZoomIn);
   mpMapCanvas->setMapTool(mypTool);
 }
 void MainWindow::zoomOutMode()
 {
-  QgsMapTool* mypTool = new QgsMapToolZoom(mpMapCanvas, FALSE);
+  QgsMapTool* mypTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
   mypTool->setAction(mActionZoomOut);
   mpMapCanvas->setMapTool(mypTool);
 }
