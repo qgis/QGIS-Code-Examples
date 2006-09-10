@@ -22,6 +22,7 @@
 
 //QGis Includes
 #include <qgsmapcanvas.h>
+#include <qgsmaptool.h>
 
 //QT Includes
 #include <QtGui>
@@ -48,6 +49,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowBase
      QgsMapCanvas * mpMapCanvas;
      QVBoxLayout  * mpLayout;
      QToolBar * mpMapToolBar;
+     QgsMapTool * mpPanTool;
+     QgsMapTool * mpZoomInTool;
+     QgsMapTool * mpZoomOutTool;
 
 };
 

@@ -76,22 +76,32 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   mpLayout->addWidget(mpMapCanvas);
 
   //create the action behaviours
-  connect(mActionPan, SIGNAL(triggered()), this, SLOT(panMode()));
-  connect(mActionZoomIn, SIGNAL(triggered()), this, SLOT(zoomInMode()));
-  connect(mActionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOutMode()));
-  connect(mActionAddLayer, SIGNAL(triggered()), this, SLOT(addLayer()));
+  connect(mpActionPan, SIGNAL(triggered()), this, SLOT(panMode()));
+  connect(mpActionZoomIn, SIGNAL(triggered()), this, SLOT(zoomInMode()));
+  connect(mpActionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOutMode()));
+  connect(mpActionAddLayer, SIGNAL(triggered()), this, SLOT(addLayer()));
 
   //create a little toolbar
   mpMapToolBar = addToolBar(tr("File"));
-  mpMapToolBar->addAction(mActionAddLayer);
-  mpMapToolBar->addAction(mActionZoomIn);
-  mpMapToolBar->addAction(mActionZoomOut);
-  mpMapToolBar->addAction(mActionPan);
+  mpMapToolBar->addAction(mpActionAddLayer);
+  mpMapToolBar->addAction(mpActionZoomIn);
+  mpMapToolBar->addAction(mpActionZoomOut);
+  mpMapToolBar->addAction(mpActionPan);
 
+  //create the maptools
+  mpPanTool = new QgsMapToolPan(mpMapCanvas);
+  mpPanTool->setAction(mpActionPan);
+  mpZoomInTool = new QgsMapToolZoom(mpMapCanvas, FALSE); // false = in
+  mpZoomInTool->setAction(mpActionZoomIn);
+  mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
+  mpZoomOutTool->setAction(mpActionZoomOut);
 }
 
 MainWindow::~MainWindow()
 {
+  delete mpZoomInTool;
+  delete mpZoomOutTool;
+  delete mpPanTool;
   delete mpMapToolBar;
   delete mpMapCanvas;
   delete mpLayout;
@@ -99,22 +109,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::panMode()
 {
-  QgsMapTool* mypTool = new QgsMapToolPan(mpMapCanvas);
-  mypTool->setAction(mActionPan);
-  mpMapCanvas->setMapTool(mypTool);
+  mpMapCanvas->setMapTool(mpPanTool);
 
 }
 void MainWindow::zoomInMode()
 {
-  QgsMapTool* mypTool = new QgsMapToolZoom(mpMapCanvas, FALSE); // false = in
-  mypTool->setAction(mActionZoomIn);
-  mpMapCanvas->setMapTool(mypTool);
+  mpMapCanvas->setMapTool(mpZoomInTool);
 }
 void MainWindow::zoomOutMode()
 {
-  QgsMapTool* mypTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
-  mypTool->setAction(mActionZoomOut);
-  mpMapCanvas->setMapTool(mypTool);
+  mpMapCanvas->setMapTool(mpZoomOutTool);
 }
 void MainWindow::addLayer()
 {

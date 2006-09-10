@@ -48,15 +48,15 @@
     <property name="title" >
      <string>Map</string>
     </property>
-    <addaction name="mActionZoomIn" />
-    <addaction name="mActionZoomOut" />
-    <addaction name="mActionPan" />
-    <addaction name="mActionAddLayer" />
+    <addaction name="mpActionZoomIn" />
+    <addaction name="mpActionZoomOut" />
+    <addaction name="mpActionPan" />
+    <addaction name="mpActionAddLayer" />
    </widget>
    <addaction name="menuMap" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
-  <action name="mActionZoomIn" >
+  <action name="mpActionZoomIn" >
    <property name="icon" >
     <iconset resource="resources.qrc" >:/mActionZoomIn.png</iconset>
    </property>
@@ -64,7 +64,7 @@
     <string>Zoom In</string>
    </property>
   </action>
-  <action name="mActionZoomOut" >
+  <action name="mpActionZoomOut" >
    <property name="icon" >
     <iconset resource="resources.qrc" >:/mActionZoomOut.png</iconset>
    </property>
@@ -72,7 +72,7 @@
     <string>Zoom Out</string>
    </property>
   </action>
-  <action name="mActionPan" >
+  <action name="mpActionPan" >
    <property name="icon" >
     <iconset resource="resources.qrc" >:/mActionPan.png</iconset>
    </property>
@@ -80,7 +80,7 @@
     <string>Pan</string>
    </property>
   </action>
-  <action name="mActionAddLayer" >
+  <action name="mpActionAddLayer" >
    <property name="icon" >
     <iconset resource="resources.qrc" >:/mActionAddLayer.png</iconset>
    </property>
