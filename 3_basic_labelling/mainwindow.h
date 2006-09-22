@@ -23,6 +23,9 @@
 //QGis Includes
 #include <qgsmapcanvas.h>
 #include <qgsmaptool.h>
+#include <qgslabel.h>
+#include <qgslabelattributes.h>
+
 
 //QT Includes
 #include <QtGui>

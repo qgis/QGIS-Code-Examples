@@ -27,8 +27,7 @@
 #include <qgsmaplayerregistry.h>
 #include <qgsvectorlayer.h>
 #include <qgsmapcanvas.h>
-#include <qgslabel.h>
-#include <qgslabelattributes.h>
+#include <qgsfield.h>
 //
 // QGIS Map tools
 //
@@ -145,11 +144,15 @@ void MainWindow::addLayer()
   std::deque<QString> myLayerSet;
   mypLayer->setRenderer(mypRenderer);
   
+  //
   //set up labelling for the layer
-  mypLabel =  new QgsLabel ( dataProvider->fields() );
-  //true parameter to set sensible defaults
-  mypLabelAttributes = mLabel->layerAttributes();
-  mypLayer->setLabel(mypLabel);
+  //
+  mypLabel = mypLayer->label();
+  mypLabelAttributes = mypLabel->layerAttributes();
+  std::vector<QgsField> myFields = mypLayer->fields();
+  
+  mypLayer->setLabelOn(true);
+  
   // Add the Vector Layer to the Layer Registry
   QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
 

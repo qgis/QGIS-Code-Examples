@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = qgis_example2
+TARGET = qgis_example3
 QT = qt3support sql opengl network svg gui core xml
 LANGUAGE= C++
 linux-g++{
@@ -17,6 +17,8 @@ macx{
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
   LIBS = -L$${QGISLIBDIR} -lqgis_core -lqgis_gui
+  system(mkdir -p qgis_example3.app/Contents/MacOS/share/qgis/resources/)
+  system(cp $${QGISDIR}/share/qgis/resources/srs.db qgis_example3.app/Contents/MacOS/share/qgis/resources/)
 }
 
 INCLUDEPATH = $${QGISDIR}/include/qgis \
