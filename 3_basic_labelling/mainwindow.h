@@ -23,9 +23,6 @@
 //QGis Includes
 #include <qgsmapcanvas.h>
 #include <qgsmaptool.h>
-#include <qgslabel.h>
-#include <qgslabelattributes.h>
-
 
 //QT Includes
 #include <QtGui>
@@ -55,8 +52,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowBase
      QgsMapTool * mpPanTool;
      QgsMapTool * mpZoomInTool;
      QgsMapTool * mpZoomOutTool;
-     QgsLabel * mypLabel;
-     QgsLabelAttributes * mypLabelAttributes;
 };
 
 #endif

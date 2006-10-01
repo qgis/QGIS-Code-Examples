@@ -41,7 +41,13 @@
 //#include "qgsmaptoolselect.h"
 //#include "qgsmaptoolvertexedit.h"
 //#include "qgsmeasure.h"
+
 //
+//Labelling related
+//
+#include <qgslabel.h>
+#include <qgslabelattributes.h>
+
 // Std Includes
 //
 #include <deque.h>
@@ -147,10 +153,11 @@ void MainWindow::addLayer()
   //
   //set up labelling for the layer
   //
+  QgsLabel * mypLabel;
+  QgsLabelAttributes * mypLabelAttributes;
   mypLabel = mypLayer->label();
   mypLabelAttributes = mypLabel->layerAttributes();
   std::vector<QgsField> myFields = mypLayer->fields();
-  
   mypLayer->setLabelOn(true);
   
   // Add the Vector Layer to the Layer Registry
