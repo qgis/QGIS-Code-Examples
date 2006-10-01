@@ -33,9 +33,10 @@
 <p class="p1">&lt;code&gt;</p>
 <p class="p1"><span class="Apple-converted-space">     </span>#include &lt;qgslabel.h&gt;</p>
 <p class="p1"><span class="Apple-converted-space">     </span>#include &lt;qgslabelattributes.h&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>#include &lt;qgsfield.h&gt;</p>
 <p class="p1">&lt;/code&gt;</p>
 <p class="p2"><br></p>
-<p class="p1">Each vector layer can have a QgsLabel associated with it. A QgsLabel is a renderer for labels. It has a member of type QgsLabelAttributes which determines the placement (above / below / left / right etc), rotation, size, size units (points or map units), font, colour and various other elements of the label.</p>
+<p class="p1">Each vector layer can have a QgsLabel associated with it. A QgsLabel is a renderer for labels. It has a member of type QgsLabelAttributes which determines the placement (above / below / left / right etc), rotation, size, size units (points or map units), font, colour and various other elements of the label. The QgsField include is needed because we will be querying the vector layer for its available fields so that we can determine which fiekd should be used for labelling.</p>
 <p class="p2"><br></p>
 <p class="p1">In the same cpp file you will see I define a label and a label attributes pointer. These will be used to setup the labelling characteristics we want and then assigned to the layer:</p>
 <p class="p2"><br></p>
@@ -63,7 +64,13 @@
 <p class="p1"><span class="Apple-converted-space">    </span>std::vector&lt;QgsField&gt; myFields = mypLayer-&gt;fields();</p>
 <p class="p1">&lt;/code&gt;</p>
 <p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>mypLayer-&gt;setLabelOn(true);</p>
+<p class="p1">By the way - you can browse the code for field, label, lable attributes etc from &lt;h href="https://svn.qgis.org/trac/browser/trunk/qgis/src/core"&gt;the QGIS source&lt;/a&gt;. Also for more implementation examples of how to set up labelling, its worth taking a look at &lt;a href="https://svn.qgis.org/trac/browser/trunk/qgis/src/gui/qgslabeldialog.cpp"&gt;qgslabeldialog.cpp&lt;/a&gt;.</p>
+<p class="p2"><br></p>
+<p class="p1">Now lets pick on of the fields from the field list and use it as the label field.</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;code&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">   </span>mypLayer-&gt;setLabelOn(true);</p>
+<p class="p1">&lt;/code&gt;</p>
 <p class="p2"><br></p>
 <p class="p1">&lt;h3&gt;Mac Specific Notes&lt;/h3&gt;</p>
 <p class="p2"><br></p>

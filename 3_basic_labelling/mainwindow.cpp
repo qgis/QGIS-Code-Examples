@@ -27,7 +27,6 @@
 #include <qgsmaplayerregistry.h>
 #include <qgsvectorlayer.h>
 #include <qgsmapcanvas.h>
-#include <qgsfield.h>
 //
 // QGIS Map tools
 //
@@ -47,6 +46,7 @@
 //
 #include <qgslabel.h>
 #include <qgslabelattributes.h>
+#include <qgsfield.h>
 
 // Std Includes
 //
@@ -153,11 +153,52 @@ void MainWindow::addLayer()
   //
   //set up labelling for the layer
   //
+
+  //get the label instance associated with the layer
   QgsLabel * mypLabel;
-  QgsLabelAttributes * mypLabelAttributes;
   mypLabel = mypLayer->label();
+  //and the label attributes associated with the label
+  QgsLabelAttributes * mypLabelAttributes;
   mypLabelAttributes = mypLabel->layerAttributes();
+
+  //get the field list associated with the layer
+  //we'll print the names out to console for diagnostic purposes
   std::vector<QgsField> myFields = mypLayer->fields();
+  for (unsigned int i = 0; i < myFields.size(); i++ )
+  {
+    qDebug("Field Name: " +  myFields[i].name().toLocal8Bit() );
+  }
+  //just use the last field's name in the fields list as the label field! 
+  qDebug("set label field to " + myFields[myFields.size()-1].name());
+  mypLabel->setLabelField( QgsLabel::Text,  myFields[myFields.size()-1].name());
+  //set the colour of the label text
+  mypLabelAttributes->setColor(Qt::black);
+  //create a 'halo' effect around each label so it
+  //can still be read on dark backgrounds
+  mypLabelAttributes->setBufferEnabled(true);
+  mypLabelAttributes->setBufferColor(Qt::yellow);
+  int myType = QgsLabelAttributes::PointUnits;
+  mypLabelAttributes->setBufferSize(1,myType);
+  
+  /*
+   * Here are a bunch of other things you can set based on values on a database field
+   * the second parameter in each case would be the field name from which the 
+   * attribute can be retrieved.
+  mypLabel->setLabelField( QgsLabel::Family, "fontFamily" );
+  mypLabel->setLabelField( QgsLabel::Bold,  "fontIsBold" );
+  mypLabel->setLabelField( QgsLabel::Italic, "fontIsItalic"  );
+  mypLabel->setLabelField( QgsLabel::Underline, "fontIsUnderlined"  );
+  mypLabel->setLabelField( QgsLabel::Size, "fontSize" );
+  mypLabel->setLabelField( QgsLabel::BufferSize,"fontBufferSize" );
+  mypLabel->setLabelField( QgsLabel::XCoordinate, "labelX" );
+  mypLabel->setLabelField( QgsLabel::YCoordinate, "labelY");
+  mypLabel->setLabelField( QgsLabel::XOffset, "labelXOffset");
+  mypLabel->setLabelField( QgsLabel::YOffset, "labelYOffset");
+  mypLabel->setLabelField( QgsLabel::Alignment, "labelAlignment" );
+  mypLabel->setLabelField( QgsLabel::Angle, "labelAngle");
+  */
+  
+  //lastly we enable labelling!
   mypLayer->setLabelOn(true);
   
   // Add the Vector Layer to the Layer Registry
