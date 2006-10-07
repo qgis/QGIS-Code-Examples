@@ -28,6 +28,10 @@
 #include <qgsrasterlayer.h>
 #include <qgsmapcanvas.h>
 //
+// Needed fr rubber band support
+//
+#include <qgspoint.h>
+//
 // QGIS Map tools
 //
 #include "qgsmaptoolpan.h"
@@ -87,6 +91,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   mpZoomInTool->setAction(mpActionZoomIn);
   mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
   mpZoomOutTool->setAction(mpActionZoomOut);
+
+  //create the rubber band
+  bool myPolygonFlag=true;
+  mpRubberBand = new QgsRubberBand(mpMapCanvas, myPolygonFlag );
+  mpRubberBand->show();
 }
 
 MainWindow::~MainWindow()
@@ -141,4 +150,17 @@ void MainWindow::addLayer()
   // Set the Map Canvas Layer Set
   mpMapCanvas->setLayerSet(myLayerSet);
 }
-
+void MainWindow::on_mpToolShowRubberBand_clicked()
+{
+  QgsPoint myPoint1(10,10);
+  mpRubberBand->addPoint(myPoint1);
+  QgsPoint myPoint2(20,10);
+  mpRubberBand->addPoint(myPoint2);
+  QgsPoint myPoint3(20,20);
+  mpRubberBand->addPoint(myPoint3);
+}
+void MainWindow::on_mpToolHideRubberBand_clicked()
+{
+  bool myPolygonFlag=true;
+  mpRubberBand->reset(myPolygonFlag);
+}

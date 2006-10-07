@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>MainWindowBase</class>
  <widget class="QMainWindow" name="MainWindowBase" >
   <property name="geometry" >
@@ -23,7 +20,7 @@
     <property name="spacing" >
      <number>6</number>
     </property>
-    <item row="0" column="0" >
+    <item row="0" column="0" colspan="4" >
      <widget class="QFrame" name="frameMap" >
       <property name="frameShape" >
        <enum>QFrame::StyledPanel</enum>
@@ -32,6 +29,40 @@
        <enum>QFrame::Raised</enum>
       </property>
      </widget>
+    </item>
+    <item row="1" column="1" >
+     <widget class="QLabel" name="label" >
+      <property name="text" >
+       <string>Rubber Band Visibility:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2" >
+     <widget class="QToolButton" name="mpToolShowRubberBand" >
+      <property name="text" >
+       <string>Show</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3" >
+     <widget class="QToolButton" name="mpToolHideRubberBand" >
+      <property name="text" >
+       <string>Hide</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" >
+     <spacer>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" >
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>
@@ -89,7 +120,6 @@
    </property>
   </action>
  </widget>
- <pixmapfunction></pixmapfunction>
  <resources>
   <include location="resources.qrc" />
  </resources>

@@ -23,6 +23,10 @@
 //QGis Includes
 #include <qgsmapcanvas.h>
 #include <qgsmaptool.h>
+//
+// Needed for rubber band support
+//
+#include <qgsrubberband.h>
 
 //QT Includes
 #include <QtGui>
@@ -44,15 +48,18 @@ class MainWindow : public QMainWindow, private Ui::MainWindowBase
       void zoomOutMode();
       void panMode();
       void addLayer();
+      // next are tools overloaded from base class
+      void on_mpToolShowRubberBand_clicked();
+      void on_mpToolHideRubberBand_clicked();
       
     private:
-     QgsMapCanvas * mpMapCanvas;
-     QVBoxLayout  * mpLayout;
-     QToolBar * mpMapToolBar;
-     QgsMapTool * mpPanTool;
-     QgsMapTool * mpZoomInTool;
-     QgsMapTool * mpZoomOutTool;
-
+     QgsMapCanvas  * mpMapCanvas;
+     QVBoxLayout   * mpLayout;
+     QToolBar      * mpMapToolBar;
+     QgsMapTool    * mpPanTool;
+     QgsMapTool    * mpZoomInTool;
+     QgsMapTool    * mpZoomOutTool;
+     QgsRubberBand * mpRubberBand;
 };
 
 #endif
