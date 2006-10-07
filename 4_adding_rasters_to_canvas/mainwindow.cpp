@@ -25,21 +25,13 @@
 #include <qgsproviderregistry.h>
 #include <qgssinglesymbolrenderer.h>
 #include <qgsmaplayerregistry.h>
-#include <qgsvectorlayer.h>
+#include <qgsrasterlayer.h>
 #include <qgsmapcanvas.h>
 //
 // QGIS Map tools
 //
 #include "qgsmaptoolpan.h"
 #include "qgsmaptoolzoom.h"
-//
-// These are the other headers for available map tools (not used in this example)
-//
-//#include "qgsmaptoolcapture.h"
-//#include "qgsmaptoolidentify.h"
-//#include "qgsmaptoolselect.h"
-//#include "qgsmaptoolvertexedit.h"
-//#include "qgsmeasure.h"
 //
 // Std Includes
 //
@@ -122,15 +114,9 @@ void MainWindow::zoomOutMode()
 }
 void MainWindow::addLayer()
 {
-  QString myLayerPath         = "data";
-  QString myLayerBaseName     = "test";
-  QString myProviderName      = "ogr";
-  
-  QgsVectorLayer * mypLayer = new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
-  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->vectorType());
-  std::deque<QString> myLayerSet;
-  mypLayer->setRenderer(mypRenderer);
-
+  QFileInfo myRasterFileInfo("data/Abarema_jupunba_projection.tif");
+  QgsRasterLayer * mypLayer = new QgsRasterLayer(myRasterFileInfo.filePath(), 
+      myRasterFileInfo.completeBaseName());
   if (mypLayer->isValid())
   {
     qDebug("Layer is valid");
@@ -140,6 +126,10 @@ void MainWindow::addLayer()
     qDebug("Layer is NOT valid");
     return;
   }
+  mypLayer->setColorRampingType(QgsRasterLayer::BLUE_GREEN_RED);
+  mypLayer->setDrawingStyle(QgsRasterLayer::SINGLE_BAND_PSEUDO_COLOR);
+  std::deque<QString> myLayerSet;
+
   // Add the Vector Layer to the Layer Registry
   QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
 

@@ -1,6 +1,6 @@
 TEMPLATE = app
-TARGET = qgis_example2
-QT = qt3support sql opengl network svg gui core xml
+TARGET = qgis_example4
+QT = qt3support sql network svg gui core xml
 LANGUAGE= C++
 linux-g++{
   QGISDIR=[path to installed qgis]
@@ -8,7 +8,7 @@ linux-g++{
   QGISSRCDIR=[path to qgis src directory]
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
-  LIBS = -L$${QGISLIBDIR} -lqgis_core -lproj -lqgis_gui
+  LIBS = -L$${QGISLIBDIR} -lqgis_core -lqgis_raster -lproj -lqgis_gui
 }
 macx{
   QGISDIR=/Users/timsutton/apps/qgis.app/Contents/MacOS/
@@ -16,7 +16,7 @@ macx{
   QGISSRCDIR=/Users/timsutton/dev/cpp/qgis/src/
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
-  LIBS = -L$${QGISLIBDIR} -lqgis_core -lqgis_gui
+  LIBS = -L$${QGISLIBDIR} -lqgis_core -lqgis_gui -lqgis_raster
 }
 
 INCLUDEPATH = $${QGISDIR}/include/qgis \
