@@ -1,9 +1,7 @@
-Tutorial 5: Creating temporary features on the map canvas
-
-<img src="images/tim50x50.png" align="left">In my <a href="http://blog.qgis.org/?q=node/27">last tutorial</a> I showed you how to add a raster layer to the map canvas. Today we will take a first look at managing transient objects on the map canvas. The QgsRubberBand class lets you draw lines and polygons on top of the map canvas, without them belonging to any data layer. This is typically useful for digitising and annotating maps. In a future tutorial I will show you how to do the same think with point features.
+<img src="images/tim50x50.png" align="left">In my <a href="http://blog.qgis.org/?q=node/27">last tutorial</a> I showed you how to add a raster layer to the map canvas. Today we will take a first look at managing transient objects on the map canvas. The QgsRubberBand class lets you draw lines and polygons on top of the map canvas, without them belonging to any data layer. This is typically useful for digitising and annotating maps. In a future tutorial I will show you how to do the same thing with point features.
 
 First lets take a sneak preview of what we will achieve in this tutorial. Heres a 'before' shot:
-<img src="http://blog.qgis.org/files/tutorial5hide.jpg"/>
+<img src="http://blog.qgis.org/files/tutorial5_hide.jpg"/>
 
 And here is the same scene with a rubber band drawn in the top left hand corner.
 <img src="http://blog.qgis.org/files/tutorial5.jpg"/>
@@ -55,7 +53,7 @@ All pretty straightforward so far. Lets go over to the implementation file, main
     #include &lt;qgspoint.h>
 </pre>
 
-This is needed because we will be using QgsPoint objects to define the vertices of our rubber band. The code that follows sets up the main window and toolbars as covered in previous tutorials. Towards the end of the contructor you will see we initialise the rubber band member:
+This is needed because we will be using QgsPoint objects to define the vertices of our rubber band. The code that follows sets up the main window and toolbars as covered in previous tutorials. Towards the end of the constructor you will see we initialise the rubber band member:
 
 <pre> 
      //create the rubber band
@@ -66,7 +64,7 @@ This is needed because we will be using QgsPoint objects to define the vertices 
 
 I've written it a bit more verbosely than necessary to make it clear. The rubber band constructor needs two parameters; the QgsMapCanvas on to which our rubber band will be drawn, and a boolean indicating whether the rubber band is a polygon or not. In the case that the rubber band is a polygon it will always close the gap between first and last points.
 
-Next I wired up the two toolButtons I added. Lets look at the show event first:
+Next I wired up the two toolButtons I added using Qt4 Designer to the mainwindowbase.ui file. Lets look at the show event first:
 
 <pre>
 void MainWindow::on_mpToolShowRubberBand_clicked()
@@ -81,6 +79,8 @@ void MainWindow::on_mpToolShowRubberBand_clicked()
   mpRubberBand->addPoint(myPoint4);
 }
 </pre>
+
+We are specifying here to draw a 10x10 pixel box, starting its top left corner at 10,10 pixels from the corner of the map canvase. So whats all that coordinate transform stuff about then?
 
 The rubber band operates in the spatial reference system of the associated canvas. In other words when you specify the coordinates of vertices it should be in map units, not in screen pixel coordinates. Fortunately there is an easy way to translate from screen coordinates to map coordinates. First we get the <a href="https://svn.qgis.org/trac/browser/trunk/qgis/src/gui/qgsmaptopixel.h">
 QgsMapToPixel</a> instance from the map canvas. Next we call its toMapCoordinates(int,int) method which will return a QgsPoint. For each point I create I am just adding it to the rubber band. Because I am walking around the corners of a square, the end result will be a square drawn on screen. Remember that we specified our rubber band is a polygon in the constructor, so there is no need to create a 5th point to close the polygon - its automaticall closed for us!
