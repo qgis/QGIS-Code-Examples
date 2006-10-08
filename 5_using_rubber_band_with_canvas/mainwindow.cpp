@@ -106,6 +106,7 @@ MainWindow::~MainWindow()
   delete mpMapToolBar;
   delete mpMapCanvas;
   delete mpLayout;
+  delete mpRubberBand;
 }
 
 void MainWindow::panMode()
@@ -152,12 +153,14 @@ void MainWindow::addLayer()
 }
 void MainWindow::on_mpToolShowRubberBand_clicked()
 {
-  QgsPoint myPoint1(10,10);
+  QgsPoint myPoint1 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(10, 10);
   mpRubberBand->addPoint(myPoint1);
-  QgsPoint myPoint2(20,10);
+  QgsPoint myPoint2 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(20, 10);
   mpRubberBand->addPoint(myPoint2);
-  QgsPoint myPoint3(20,20);
+  QgsPoint myPoint3 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(20, 20);
   mpRubberBand->addPoint(myPoint3);
+  QgsPoint myPoint4 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(10, 20);
+  mpRubberBand->addPoint(myPoint4);
 }
 void MainWindow::on_mpToolHideRubberBand_clicked()
 {
