@@ -25,7 +25,6 @@
 #include <qgsfeature.h>
 #include <qgsfeatureattribute.h>
 #include <qgsfield.h>
-#include <qgsmaplayerregistry.h>
 #include <qgsproviderregistry.h>
 #include <qgsvectordataprovider.h>
 #include <qgsvectorlayer.h>
@@ -72,6 +71,24 @@ void MainWindow::addLayer()
 
   //get the field list associated with the layer
   std::vector<QgsField> myFields = mypLayer->fields();
+  //we will hold the list of attributes in this string
+  QString myString;
+  //print out the field names first
+  for (unsigned int i = 0; i < myFields.size(); i++ )
+  {
+    //a little logic so we can produce output like : 
+    // "foo","bar","etc"
+    if (i==0)
+    {
+      //                 here is where we actually get the field value
+      myString = "\"" +  myFields[i].name().trimmed() + "\"";
+    }
+    else
+    {
+      myString += ",\"" +  myFields[i].name().trimmed() + "\"";
+    }
+  }
+  textBrowser->append("Field List: " + myString);
   //get the provider associated with the layer
   //the provider handles data io and is a plugin in qgis.
   QgsVectorDataProvider* mypProvider=mypLayer->getDataProvider();
@@ -80,24 +97,6 @@ void MainWindow::addLayer()
   {
     //create a holder for retrieving features from the provider
     QgsFeature *mypFeature;
-    //we will hold the list of attributes in this string
-    QString myString;
-    //print out the field names first
-    for (unsigned int i = 0; i < myFields.size(); i++ )
-    {
-        //a little logic so we can produce output like : 
-        // "foo","bar","etc"
-        if (i==0)
-        {
-          //                 here is where we actually get the field value
-          myString = "\"" +  myFields[i].name().trimmed() + "\"";
-        }
-        else
-        {
-          myString += ",\"" +  myFields[i].name().trimmed() + "\"";
-        }
-    }
-    textBrowser->append("Field List: " + myString);
     //get the provider ready to iterate through it
     mypProvider->reset();
     //now iterate through each feature
