@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = qgis_example3
+TARGET = qgis_example6
 QT = qt3support sql opengl network svg gui core xml
 LANGUAGE= C++
 linux-g++{
@@ -31,7 +31,7 @@ INCLUDEPATH = $${QGISDIR}/include/qgis \
 
 CONFIG += qt gui exceptions stl warn_on debug thread
 
-RESOURCES += resources.qrc
+#RESOURCES += resources.qrc
 
 FORMS += mainwindowbase.ui
 
