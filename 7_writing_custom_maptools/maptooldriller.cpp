@@ -28,7 +28,7 @@
 #include <QHash>
 
 MapToolDriller::MapToolDriller(QgsMapCanvas* canvas)
-  : QgsMapTool(canvas), QObject()
+  : QObject(), QgsMapTool(canvas)
 {
   // set cursor
   QPixmap myIdentifyQPixmap = QPixmap((const char **) identify_cursor);

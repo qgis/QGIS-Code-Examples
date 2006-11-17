@@ -24,6 +24,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QString>
 
 class QgsMapLayer;
 class QgsRasterLayer;
@@ -54,13 +55,14 @@ class MapToolDriller : public QObject, public QgsMapTool
     //! called when map tool is being deactivated
     virtual void deactivate();
 
-  private:
-
-    QHash<QString,double>  drill(const QgsPoint& myPoint);
-
-
+    typedef QHash<QString,double> DrillResult;
   signals:
-    void drilled(QHash<Qstring,double> theResult);
+    void drilled(DrillResult);
+
+
+
+  private:
+    QHash<QString,double>  drill(const QgsPoint& myPoint);
 private slots:
 
 
