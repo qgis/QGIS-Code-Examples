@@ -1,0 +1,121 @@
+<img src="images/tim50x50.png" align="left">In my <a href="http://blog.qgis.org/?q=node/27">last tutorial</a> I showed you how to add a raster layer to the map canvas. Today we will take a first look at managing transient objects on the map canvas. The QgsRubberBand class lets you draw lines and polygons on top of the map canvas, without them belonging to any data layer. This is typically useful for digitising and annotating maps. In a future tutorial I will show you how to do the same thing with point features.
+
+First lets take a sneak preview of what we will achieve in this tutorial. Heres a 'before' shot:
+<img src="http://blog.qgis.org/files/tutorial5_hide.jpg"/>
+
+And here is the same scene with a rubber band drawn in the top left hand corner.
+<img src="http://blog.qgis.org/files/tutorial5.jpg"/>
+
+<!--break-->
+
+
+I used as a basis for this tutorial the project from tutorial 4 (so its worth going over that before reading this tutorial). I also suggest looking at the other tutorials before going through this one so you can get a but more familiar with the canvas API - I wont be rehashing that here.
+
+<p>As with my previous tutorials, the entire project can be checked out from the QGIS Subversion repository using the following command:</p>
+
+<pre>svn co https://svn.qgis.org/repos/qgis/trunk/code_examples/5_using_rubber_band_with_canvas
+</pre>
+
+<p>In the working directory for the tutorial code you will find a number of files including c++ sources, icons and a simple data file under data. There is also the .ui file for the main window.</p>
+
+<p><strong>Note:</strong> You will need to edit the .pro file in the above svn directory to match your system.
+
+
+<h3>Rubber Band Specifics</h3>
+
+You can browse the code for QgsRasterLayer and related classes using <a href="https://svn.qgis.org/trac/browser/trunk/qgis/src/">the QGIS source browser</a>. Look in the 'core' and 'gui' subdirectories. The classes we are particularly interested in are QgsRubberBand, QgsPoint and QgsMapCanvas. Also for more implementation examples, take a look at <a href="https://svn.qgis.org/trac/browser/trunk/qgis/src/gui/qgsmeasure.cpp">
+qgsmeasure.cpp</a>. Now on with our demo application....
+
+
+In mainwindow.h you will notice the include needed to work with rubber bands:
+
+<pre>
+    #include &lt;qgsrubberband.h>
+</pre>
+
+Next I added a couple of slots to handle events from the show and hide rubber band tool buttons that I added to the main window:
+
+<pre>
+  // next are tools overloaded from base class
+  void on_mpToolShowRubberBand_clicked();
+  void on_mpToolHideRubberBand_clicked();
+</pre>
+
+Also I've added a class member for our rubber band:
+
+<pre>
+  QgsRubberBand * mpRubberBand;
+</pre>
+
+All pretty straightforward so far. Lets go over to the implementation file, mainwindow.cpp. First you will see a new include:
+
+<pre>
+    #include &lt;qgspoint.h>
+</pre>
+
+This is needed because we will be using QgsPoint objects to define the vertices of our rubber band. The code that follows sets up the main window and toolbars as covered in previous tutorials. Towards the end of the constructor you will see we initialise the rubber band member:
+
+<pre> 
+     //create the rubber band
+     bool myPolygonFlag=true;
+     mpRubberBand = new QgsRubberBand(mpMapCanvas, myPolygonFlag );
+     mpRubberBand->show();
+</pre>
+
+I've written it a bit more verbosely than necessary to make it clear. The rubber band constructor needs two parameters; the QgsMapCanvas on to which our rubber band will be drawn, and a boolean indicating whether the rubber band is a polygon or not. In the case that the rubber band is a polygon it will always close the gap between first and last points.
+
+Next I wired up the two toolButtons I added using Qt4 Designer to the mainwindowbase.ui file. Lets look at the show event first:
+
+<pre>
+void MainWindow::on_mpToolShowRubberBand_clicked()
+{
+  QgsPoint myPoint1 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(10, 10);
+  mpRubberBand->addPoint(myPoint1);
+  QgsPoint myPoint2 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(20, 10);
+  mpRubberBand->addPoint(myPoint2);
+  QgsPoint myPoint3 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(20, 20);
+  mpRubberBand->addPoint(myPoint3);
+  QgsPoint myPoint4 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(10, 20);
+  mpRubberBand->addPoint(myPoint4);
+}
+</pre>
+
+We are specifying here to draw a 10x10 pixel box, starting its top left corner at 10,10 pixels from the corner of the map canvase. So whats all that coordinate transform stuff about then?
+
+The rubber band operates in the spatial reference system of the associated canvas. In other words when you specify the coordinates of vertices it should be in map units, not in screen pixel coordinates. Fortunately there is an easy way to translate from screen coordinates to map coordinates. First we get the <a href="https://svn.qgis.org/trac/browser/trunk/qgis/src/gui/qgsmaptopixel.h">
+QgsMapToPixel</a> instance from the map canvas. Next we call its toMapCoordinates(int,int) method which will return a QgsPoint. For each point I create I am just adding it to the rubber band. Because I am walking around the corners of a square, the end result will be a square drawn on screen. Remember that we specified our rubber band is a polygon in the constructor, so there is no need to create a 5th point to close the polygon - its automaticall closed for us!
+
+Now that we know how to create a QgsRubberBand, we should also show how to remove it from the canvas again. This is illustrated in the next method:
+
+<pre>
+void MainWindow::on_mpToolHideRubberBand_clicked()
+{
+  bool myPolygonFlag=true;
+  mpRubberBand->reset(myPolygonFlag);
+}
+</pre>
+
+Ok so thats pretty easy - just call reset on the rubber band. When you do so you need to respecify whether the rubber band is to operate in polyline or polygon mode.
+
+Lastly you should note that you are responsible for managing the memory allocated to the rubber band, this you will see that in the destructor for mainwindow.cpp I have the following:
+
+<pre>
+delete mpRubberBand;
+</pre>
+
+You are not limited to only one QgsRubberBand instance either - you can add as many as you like. In the screenshot below I added a second rubber band:
+
+<img src="http://blog.qgis.org/files/tutorial5_2rubberbands.jpg"/>
+
+Well I hope you find lots of cool uses  for QgsRubberBand - feel free to let us know in the comments below how you are using it. Thats the end of tutorial5!
+
+
+<h3>Mac Specific Notes</h3>
+
+After building the application bundle (qmake; make) you can copy the spatial reference system database into the bundle to avoid 'cant find resource' type errors:
+
+<pre>
+mkdir -p qgis_example3.app/Contents/MacOS/share/qgis/resources/ 
+cp -r /Applications/qgis.app/Contents/MacOS/share/qgis/resources/* \ 
+         qgis_example3.app/Contents/MacOS/share/qgis/resources/
+</pre>
