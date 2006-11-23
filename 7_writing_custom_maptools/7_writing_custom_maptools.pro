@@ -10,7 +10,7 @@ linux-g++{
   #QGISSRCDIR=[path to qgis src directory]
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
-  LIBS = -L$${QGISLIBDIR} -lqgis_core -lproj -lqgis_gui
+  LIBS = -L$${QGISLIBDIR} -lqgis_core -lproj -lqgis_gui -lqgis_raster
 }
 macx{
   QGISDIR=/Users/timsutton/apps/qgis.app/Contents/MacOS/
@@ -18,7 +18,7 @@ macx{
   QGISSRCDIR=/Users/timsutton/dev/cpp/qgis/src/
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
-  LIBS = -L$${QGISLIBDIR} -lqgis_core -lqgis_gui
+  LIBS = -L$${QGISLIBDIR} -lqgis_core -lqgis_gui -lqgis_raster
   system(mkdir -p qgis_example3.app/Contents/MacOS/share/qgis/resources/)
   system(cp $${QGISDIR}/share/qgis/resources/srs.db qgis_example3.app/Contents/MacOS/share/qgis/resources/)
 }
