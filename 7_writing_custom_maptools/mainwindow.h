@@ -20,6 +20,7 @@
 #ifndef OMGMAINWINDOW_H
 #define OMGMAINWINDOW_H
 
+#include "maptooldriller.h"
 //QGis Includes
 #include <qgsmapcanvas.h>
 #include <qgsmaptool.h>
@@ -52,7 +53,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowBase
      QgsMapTool * mpPanTool;
      QgsMapTool * mpZoomInTool;
      QgsMapTool * mpZoomOutTool;
-
+     MapToolDriller * mpDrillTool;
+     
 };
 
 #endif

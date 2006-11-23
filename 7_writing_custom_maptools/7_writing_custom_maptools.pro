@@ -33,7 +33,7 @@ INCLUDEPATH = $${QGISDIR}/include/qgis \
 
 CONFIG += qt gui exceptions stl warn_on debug thread
 
-#RESOURCES += resources.qrc
+RESOURCES += resources.qrc
 
 FORMS += mainwindowbase.ui
 

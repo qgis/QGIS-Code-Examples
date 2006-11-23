@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "mainwindow.h"
+#include "maptooldriller.h"
 //
 // QGIS Includes
 //
@@ -79,6 +80,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   mpMapToolBar->addAction(mpActionZoomIn);
   mpMapToolBar->addAction(mpActionZoomOut);
   mpMapToolBar->addAction(mpActionPan);
+  mpMapToolBar->addAction(mpDrillTool);
 
   //create the maptools
   mpPanTool = new QgsMapToolPan(mpMapCanvas);
@@ -87,6 +89,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   mpZoomInTool->setAction(mpActionZoomIn);
   mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
   mpZoomOutTool->setAction(mpActionZoomOut);
+  mpDrillTool = new MapToolDriller(mpMapCanvas); 
+  mpDrillTool->setAction(mpActionDrill);
 }
 
 MainWindow::~MainWindow()
@@ -94,6 +98,7 @@ MainWindow::~MainWindow()
   delete mpZoomInTool;
   delete mpZoomOutTool;
   delete mpPanTool;
+  delete mpDrillTool;
   delete mpMapToolBar;
   delete mpMapCanvas;
   delete mpLayout;
