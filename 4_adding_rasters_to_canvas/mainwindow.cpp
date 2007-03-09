@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "mainwindow.h"
+#include <QList>
 //
 // QGIS Includes
 //
@@ -124,21 +125,25 @@ void MainWindow::addLayer()
   else
   {
     qDebug("Layer is NOT valid");
-    return;
+    return; 
   }
-  mypLayer->setColorRampingType(QgsRasterLayer::BLUE_GREEN_RED);
   mypLayer->setDrawingStyle(QgsRasterLayer::SINGLE_BAND_PSEUDO_COLOR);
-  std::deque<QString> myLayerSet;
+  mypLayer->setColorRampingType(QgsRasterLayer::BLUE_GREEN_RED);
 
   // Add the Vector Layer to the Layer Registry
   QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
 
-  // Add the Layer to the Layer Set
-  myLayerSet.push_back(mypLayer->getLayerID());
-  mypLayer->setVisible(TRUE);
-  // set teh canvas to the extent of our layer
+  //
+  // Uncomment this and comment the part above if you are using
+  // QGIS 0.9 development code
+  //
+
+  //create a layerset
+  QList<QgsMapCanvasLayer> myList;
+  // Add the layers to the Layer Set
+  myList.append(QgsMapCanvasLayer(mypLayer, TRUE));//bool visibility
+  // set the canvas to the extent of our layer
   mpMapCanvas->setExtent(mypLayer->extent());
   // Set the Map Canvas Layer Set
-  mpMapCanvas->setLayerSet(myLayerSet);
+  mpMapCanvas->setLayerSet(myList);
 }
-
