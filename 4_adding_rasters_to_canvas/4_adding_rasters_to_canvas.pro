@@ -27,6 +27,9 @@ INCLUDEPATH = $${QGISDIR}/include/qgis \
               $${QGISSRCDIR}/raster \
               $${QGISSRCDIR}/ui 
 
+DEFINES += CORE_EXPORT=""
+DEFINES += GUI_EXPORT=""
+
 CONFIG += qt gui exceptions stl warn_on debug thread
 
 RESOURCES += resources.qrc
