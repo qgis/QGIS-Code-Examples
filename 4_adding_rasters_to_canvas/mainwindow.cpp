@@ -122,7 +122,12 @@ void MainWindow::addLayer()
     qDebug("Layer is NOT valid");
     return; 
   }
+  
+  // use this line for a grayscale image (will be rendered as pseudocolor)
   mypLayer->setDrawingStyle(QgsRasterLayer::SINGLE_BAND_PSEUDO_COLOR);
+  //or use this line for an RGB image
+  //mypLayer->setDrawingStyle(QgsRasterLayer::MULTI_BAND_COLOR);
+  
   mypLayer->setColorRampingType(QgsRasterLayer::BLUE_GREEN_RED);
 
   // Add the Vector Layer to the Layer Registry
