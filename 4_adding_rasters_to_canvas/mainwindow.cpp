@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "mainwindow.h"
 #include <QList>
+#include <QFileDialog>
 //
 // QGIS Includes
 //
@@ -43,15 +44,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 {
   //required by Qt4 to initialise the ui
   setupUi(this);
-
-  // Instantiate Provider Registry
-#if defined(Q_WS_MAC)
-  QString myPluginsDir        = "/Users/timsutton/apps/qgis.app/Contents/MacOS/lib/qgis";
-#else
-  QString myPluginsDir        = "/home/timlinux/apps/lib/qgis";
-#endif
-  QgsProviderRegistry::instance(myPluginsDir);
-
 
   // Create the Map Canvas
   mpMapCanvas= new QgsMapCanvas(0, 0);
@@ -115,7 +107,10 @@ void MainWindow::zoomOutMode()
 }
 void MainWindow::addLayer()
 {
-  QFileInfo myRasterFileInfo("data/Abarema_jupunba_projection.tif");
+  QString myFileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+                       QCoreApplication::applicationDirPath () + "/data",
+                       tr("GeoTiff (*.tif)"));
+  QFileInfo myRasterFileInfo(myFileName);
   QgsRasterLayer * mypLayer = new QgsRasterLayer(myRasterFileInfo.filePath(), 
       myRasterFileInfo.completeBaseName());
   if (mypLayer->isValid())
@@ -132,11 +127,6 @@ void MainWindow::addLayer()
 
   // Add the Vector Layer to the Layer Registry
   QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
-
-  //
-  // Uncomment this and comment the part above if you are using
-  // QGIS 0.9 development code
-  //
 
   //create a layerset
   QList<QgsMapCanvasLayer> myList;
