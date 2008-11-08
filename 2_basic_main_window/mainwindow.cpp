@@ -41,9 +41,6 @@
 //#include "qgsmaptoolvertexedit.h"
 //#include "qgsmeasure.h"
 //
-// Std Includes
-//
-#include <deque.h>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
     : QMainWindow(parent,fl)
@@ -62,9 +59,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 
   // Create the Map Canvas
   mpMapCanvas= new QgsMapCanvas(0, 0);
-  qDebug(mpMapCanvas->extent().stringRep(2));
   mpMapCanvas->enableAntiAliasing(true);
-  mpMapCanvas->useQImageToRender(false);
+  mpMapCanvas->useImageToRender(false);
   mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
   mpMapCanvas->freeze(false);
   mpMapCanvas->setVisible(true);
@@ -122,13 +118,13 @@ void MainWindow::zoomOutMode()
 }
 void MainWindow::addLayer()
 {
-  QString myLayerPath         = "data";
+  QString myLayerPath         = "../data";
   QString myLayerBaseName     = "test";
   QString myProviderName      = "ogr";
   
   QgsVectorLayer * mypLayer = new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
-  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->vectorType());
-  std::deque<QString> myLayerSet;
+  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->geometryType());
+  QList<QgsMapCanvasLayer> myLayerSet;
   mypLayer->setRenderer(mypRenderer);
 
   if (mypLayer->isValid())
@@ -144,9 +140,8 @@ void MainWindow::addLayer()
   QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
 
   // Add the Layer to the Layer Set
-  myLayerSet.push_back(mypLayer->getLayerID());
-  mypLayer->setVisible(TRUE);
-  // set teh canvas to the extent of our layer
+  myLayerSet.append(QgsMapCanvasLayer(mypLayer));
+  // set the canvas to the extent of our layer
   mpMapCanvas->setExtent(mypLayer->extent());
   // Set the Map Canvas Layer Set
   mpMapCanvas->setLayerSet(myLayerSet);
