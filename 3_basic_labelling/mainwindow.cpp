@@ -23,6 +23,7 @@
 //
 #include <qgsapplication.h>
 #include <qgsproviderregistry.h>
+#include <qgsvectordataprovider.h>
 #include <qgssinglesymbolrenderer.h>
 #include <qgsmaplayerregistry.h>
 #include <qgsvectorlayer.h>
@@ -48,10 +49,6 @@
 #include <qgslabelattributes.h>
 #include <qgsfield.h>
 
-// Std Includes
-//
-#include <deque.h>
-
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
     : QMainWindow(parent,fl)
 {
@@ -69,9 +66,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 
   // Create the Map Canvas
   mpMapCanvas= new QgsMapCanvas(0, 0);
-  qDebug(mpMapCanvas->extent().stringRep(2));
   mpMapCanvas->enableAntiAliasing(true);
-  mpMapCanvas->useQImageToRender(false);
+  mpMapCanvas->useImageToRender(false);
   mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
   mpMapCanvas->freeze(false);
   mpMapCanvas->setVisible(true);
@@ -129,7 +125,7 @@ void MainWindow::zoomOutMode()
 }
 void MainWindow::addLayer()
 {
-  QString myLayerPath         = "data";
+  QString myLayerPath         = "../data";
   QString myLayerBaseName     = "test";
   QString myProviderName      = "ogr";
   
@@ -146,8 +142,8 @@ void MainWindow::addLayer()
   }
   
   //set up a renderer for the layer
-  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->vectorType());
-  std::deque<QString> myLayerSet;
+  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->geometryType());
+  QList<QgsMapCanvasLayer> myLayerSet;
   mypLayer->setRenderer(mypRenderer);
   
   //
@@ -163,14 +159,14 @@ void MainWindow::addLayer()
 
   //get the field list associated with the layer
   //we'll print the names out to console for diagnostic purposes
-  std::vector<QgsField> myFields = mypLayer->fields();
+  QgsFieldMap myFields = mypLayer->dataProvider()->fields();
   for (unsigned int i = 0; i < myFields.size(); i++ )
   {
-    qDebug("Field Name: " +  myFields[i].name().toLocal8Bit() );
+    qDebug("Field Name: " +  QString(myFields[i].name()).toLocal8Bit() );
   }
   //just use the last field's name in the fields list as the label field! 
-  qDebug("set label field to " + myFields[myFields.size()-1].name());
-  mypLabel->setLabelField( QgsLabel::Text,  myFields[myFields.size()-1].name());
+  qDebug("set label field to " + QString(myFields[myFields.size()-1].name()).toLocal8Bit());
+  mypLabel->setLabelField( QgsLabel::Text,  myFields.size()-1);
   //set the colour of the label text
   mypLabelAttributes->setColor(Qt::black);
   //create a 'halo' effect around each label so it
@@ -199,14 +195,13 @@ void MainWindow::addLayer()
   */
   
   //lastly we enable labelling!
-  mypLayer->setLabelOn(true);
+  mypLayer->enableLabels(true);
   
   // Add the Vector Layer to the Layer Registry
   QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
 
   // Add the Layer to the Layer Set
-  myLayerSet.push_back(mypLayer->getLayerID());
-  mypLayer->setVisible(TRUE);
+  myLayerSet.append(QgsMapCanvasLayer( mypLayer ) );
   // set teh canvas to the extent of our layer
   mpMapCanvas->setExtent(mypLayer->extent());
   // Set the Map Canvas Layer Set
