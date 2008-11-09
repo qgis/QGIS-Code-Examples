@@ -1,0 +1,224 @@
+Tutorial 3 - Basic Labelling
+
+Tim Sutton, 2008
+%! target       : html
+%! style        : style.css
+%! Options      : --toc --toc-level 3 --enum-title --css-sugar --css-inside
+%! preproc      : TUT_URL   https://qgis.org
+%! PostProc(html): '(?i)(```)' '<div class="code">\1'
+%! PostProc(html): '(?i)(```)' '\1</div>'
+%! encoding: iso-8859-1
+% These are comments and will not be generated in any output
+% -------------------
+%This document is in text2tags format. You can generate html, plain text and
+%moinmoin formatted documentation by running txt2tags on this document. See the
+%txt2tags home page for more details.  Please insert manual line breaks in this
+%document as it makes diffing for changes much easier. To do this in vim 
+%automatically, select a section then issue (gq) command. Please dont
+%apply vim formatting to the whol document as it screws up some formatting
+%rather apply it selectively to paragraphs where needed.
+% To generate the text version of this document:
+%
+% Make sure you are in the top level code examples dir
+% since image paths are referenced from there:
+%
+% txt2tags -t txt -o tutorial3 3_basic_labelling/tutorial3.t2t
+% To generate the moinmoin version of this document
+% txt2tags -t moin -o tutorial3.moin  3_basic_labelling/tutorial3.t2t
+% To generate the html version of this document
+% txt2tags -t html -o tutorial3.html 3_basic_labelling/tutorial3.t2t
+% End of comments
+% -------------------
+
+= Working with Labels =
+[images/tim50x50.png]In my last tutorial I briefly ran through using map tools
+to facilitate user interaction with the map canvas. Today we will take a brief
+look at labelling features.
+
+**Updated November 2008 to use cmake build system and the updated QGIS 1.0.0 API. Tim**
+
+[images/tutorial3.jpg]
+
+
+Before I carry on too far, note that QGIS's automatic labelling algorithm is
+very primative. Martin Dobias is planning to implement a much more useful label
+placement routine - but its not going to be available in QGIS 0.8. For the best
+label placement results you should defined fields in your attribute table for
+position, rotation etc of the label. Since this is only intended to be a 'get
+you started' introduction, I won't be doing all that here...
+
+The entire project can be checked out form the QGIS Subversion repository using
+the following command:
+
+```
+svn co https://svn.osgeo.org/qgis/trunk/code_examples/3_basic_labelling
+```
+
+In the working directory for the tutorial code you will find a number of files
+including c++ sources, icons and a simple data file under data. There is also
+the .ui file for the main window.
+
+**Note:** You will need to edit the .pro file in the above svn directory to
+match your system.
+
+
+** Labelling Specifics **
+
+If you look in mainwindow.cpp you will notice a couple of new includes
+introduced since the last tutorial:
+
+```
+    #include <qgslabel.h>
+    #include <qgslabelattributes.h>
+    #include <qgsfield.h>
+```
+
+Each vector layer can have a QgsLabel associated with it. A QgsLabel is a
+renderer for labels. It has a member of type QgsLabelAttributes which
+determines the placement (above / below / left / right etc), rotation, size,
+size units (points or map units), font, colour and various other elements of
+the label. The QgsField include is needed because we will be querying the
+vector layer for its available fields so that we can determine which field
+should be used for labelling.
+
+In the same cpp file you will see I define a label and a label attributes
+pointer. These will be used to setup the labelling characteristics we want and
+then assigned to the layer:
+
+```
+     QgsLabel * mypLabel;
+     QgsLabelAttributes * mypLabelAttributes;
+```
+
+Now we will see how we actually initialise and assign the QgsLabel and the
+QgsLabelAttributes to the vector layer.
+
+```
+    //
+    //set up labelling for the layer
+    // 
+    //get the label instance associated with the layer
+    QgsLabel * mypLabel;
+    mypLabel = mypLayer->label();
+    //and the label attributes associated with the label
+    QgsLabelAttributes * mypLabelAttributes;
+    mypLabelAttributes = mypLabel->layerAttributes();
+```
+
+Great now we have a handle on the QgsLabel and QgsLabelAttributes we can start
+to manipulate how the label will be displayed. Note that the
+mypLabel->layerAttributes() method is poorly named and will likely be changed
+(to labelAttributes()) before the final release of QGIS 1.0.
+
+Ok next lets ask the vector layer's data provider what attribute fields it has
+so that we can select one to be used for labelling:
+
+```
+    //get the field list associated with the layer
+    //we'll print the names out to console for diagnostic purposes
+    QgsFieldMap myFields = mypLayer->dataProvider()->fields();
+    for (unsigned int i = 0; i < myFields.size(); i++ )
+    {
+      qDebug("Field Name: " +  QString(myFields[i].name()).toLocal8Bit() );
+    }
+```
+
+By the way - you can browse the code for field, label, label attributes etc
+from ["QGIS Source browser"
+http://trac.osgeo.org/qgis/browser/trunk/qgis/src/]. Look in the 'core' and
+'gui' subdirectories. Also for more implementation examples of how to set up
+labelling, it is worth taking a look at [qgslabeldialog.cpp
+http://trac.osgeo.org/qgis/browser/trunk/qgis/src/gui/qgslabeldialog.cpp].
+
+With access to the list of fields in your vector layer, you can then for
+example present the user with a combo box to select a label field. In this
+simple tutorial though I am simply going to use the last field in the attribute
+table. Its a bit of a no brainer because our attribute table only has one
+field! But at least this way its soft coded...
+
+```
+    //just use the last field's name in the fields list as the label field! 
+    qDebug("set label field to " + myFields[myFields.size()-1].name());
+    mypLabel->setLabelField( QgsLabel::Text,  myFields.size()-1);
+```
+
+There are a bunch of other things we can do to manipulate the appearance of the
+label. Lets set the text colour to black and draw a yellow 1 point 'halo'
+buffer around it so the label won't get lost when there are black features
+behind it:
+
+```
+    //set the colour of the label text
+    mypLabelAttributes->setColor(Qt::black);
+    //create a 'halo' effect around each label so it
+    //can still be read on dark backgrounds
+    mypLabelAttributes->setBufferEnabled(true);
+    mypLabelAttributes->setBufferColor(Qt::yellow);
+    int myType = QgsLabelAttributes::PointUnits;
+    mypLabelAttributes->setBufferSize(1,myType);
+```
+
+Finally we need to tell the layer that rendering of labels should be enabled:
+
+``` 
+   mypLayer->enableLabels(true);
+```
+
+For the absolute best labelling results, I advise you to store all the label
+properties you can inside your attribute table. Doing this will allow you to
+set rotation, placement etc on a per label basis. I left some comments in the
+tutorial source code that will get you started with this:
+
+```
+    /*
+     * Here are a bunch of other things you can set based on values on a database field
+     * the second parameter in each case would be the field name from which the 
+     * attribute can be retrieved.
+     mypLabel->setLabelField( QgsLabel::Family, "fontFamily" );
+     mypLabel->setLabelField( QgsLabel::Bold,  "fontIsBold" );
+     mypLabel->setLabelField( QgsLabel::Italic, "fontIsItalic"  );
+     mypLabel->setLabelField( QgsLabel::Underline, "fontIsUnderlined"  );
+     mypLabel->setLabelField( QgsLabel::Size, "fontSize" );
+     mypLabel->setLabelField( QgsLabel::BufferSize,"fontBufferSize" );
+     mypLabel->setLabelField( QgsLabel::XCoordinate, "labelX" );
+     mypLabel->setLabelField( QgsLabel::YCoordinate, "labelY");
+     mypLabel->setLabelField( QgsLabel::XOffset, "labelXOffset");
+     mypLabel->setLabelField( QgsLabel::YOffset, "labelYOffset");
+     mypLabel->setLabelField( QgsLabel::Alignment, "labelAlignment" );
+     mypLabel->setLabelField( QgsLabel::Angle, "labelAngle");
+    */
+```
+
+Well that wraps up this tutorial. One thing I noticed is that the canvas is not
+refreshing properly sometimes on the mac unless you cover the application
+briefly with another window. Ill post an update here if I figure out what is
+causing this.
+
+You can check out and build this tutorial using SVN and CMake using the
+following steps:
+
+```
+svn co https://svn.osgeo.org/qgis/trunk/code_examples/3_basic_labelling
+cd 3_basic_labelling
+mkdir build
+#optionally specify where your QGIS is installed (should work on all platforms)
+#if your QGIS is installed to /usr or /usr/local you can leave this next step out
+export LIB_DIR=/home/timlinux/apps
+cmake ..
+make
+./timtut3
+```
+
+
+== Mac Specific Notes ==
+
+After building the application bundle (cmake; make) you can copy the spatial
+reference system database into the bundle to avoid 'cant find resource' type
+errors:
+
+```
+mkdir -p qgis_example3.app/Contents/MacOS/share/qgis/resources/ 
+cp -r /Applications/qgis.app/Contents/MacOS/share/qgis/resources/* \ 
+         qgis_example3.app/Contents/MacOS/share/qgis/resources/
+```
+

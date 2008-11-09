@@ -33,3 +33,4 @@ Tim Sutton, 2008
 
 %!include: 1_hello_world_qgis_style/tutorial1.t2t
 %!include: 2_basic_main_window/tutorial2.t2t
+%!include: 3_basic_labelling/tutorial3.t2t
