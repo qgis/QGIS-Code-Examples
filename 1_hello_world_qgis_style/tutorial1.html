@@ -70,7 +70,7 @@ Now we go on to create a layer...
   QgsVectorLayer * mypLayer = 
       new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
   QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->geometryType());
-  QList <QgsMapCanvasLayer> myLayerSet;
+  QList &lt;QgsMapCanvasLayer> myLayerSet;
   
   mypLayer->setRenderer(mypRenderer);
   if (mypLayer->isValid())
