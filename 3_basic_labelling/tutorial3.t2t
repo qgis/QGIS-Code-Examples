@@ -58,11 +58,8 @@ In the working directory for the tutorial code you will find a number of files
 including c++ sources, icons and a simple data file under data. There is also
 the .ui file for the main window.
 
-**Note:** You will need to edit the .pro file in the above svn directory to
-match your system.
 
-
-** Labelling Specifics **
+**Labelling Specifics**
 
 If you look in mainwindow.cpp you will notice a couple of new includes
 introduced since the last tutorial:
@@ -210,7 +207,7 @@ make
 ```
 
 
-== Mac Specific Notes ==
+**Mac Specific Notes**
 
 After building the application bundle (cmake; make) you can copy the spatial
 reference system database into the bundle to avoid 'cant find resource' type
