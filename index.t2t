@@ -6,8 +6,8 @@ Tim Sutton, 2008
 %! style        : style.css
 %! Options      : --toc --toc-level 3 --enum-title --css-sugar --css-inside
 %! preproc      : TUT_URL   https://qgis.org
-%! PostProc(html): '(?i)(<pre>)' '<div class="code">\1'
-%! PostProc(html): '(?i)(</pre>)' '\1</div>'
+%! PostProc(html): '(?i)(```)' '<div class="code">\1'
+%! PostProc(html): '(?i)(```)' '\1</div>'
 %! encoding: iso-8859-1
 % These are comments and will not be generated in any output
 % -------------------
@@ -32,3 +32,4 @@ Tim Sutton, 2008
 
 
 %!include: 1_hello_world_qgis_style/tutorial1.t2t
+%!include: 2_basic_main_window/tutorial2.t2t

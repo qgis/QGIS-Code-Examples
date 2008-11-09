@@ -1,0 +1,170 @@
+Tutorial 2 - Working with QgsMapCanvas
+
+Tim Sutton, 2008
+%! target       : html
+%! style        : style.css
+%! Options      : --toc --toc-level 3 --enum-title --css-sugar --css-inside
+%! preproc      : TUT_URL   https://qgis.org
+%! PostProc(html): '(?i)(```)' '<div class="code">\1'
+%! PostProc(html): '(?i)(```)' '\1</div>'
+%! encoding: iso-8859-1
+% These are comments and will not be generated in any output
+% -------------------
+%This document is in text2tags format. You can generate html, plain text and
+%moinmoin formatted documentation by running txt2tags on this document. See the
+%txt2tags home page for more details.  Please insert manual line breaks in this
+%document as it makes diffing for changes much easier. To do this in vim 
+%automatically, select a section then issue (gq) command. Please dont
+%apply vim formatting to the whol document as it screws up some formatting
+%rather apply it selectively to paragraphs where needed.
+% To generate the text version of this document:
+%
+% Make sure you are in the top level code examples dir
+% since image paths are referenced from there:
+%
+% txt2tags -t txt -o tutorial2 2_basic_main_window/tutorial2.t2t
+% To generate the moinmoin version of this document
+% txt2tags -t moin -o tutorial2.moin  2_basic_main_window/tutorial2.t2t
+% To generate the html version of this document
+% txt2tags -t html -o tutorial2.html 2_basic_main_window/tutorial2.t2t
+% End of comments
+% -------------------
+
+= Working with QgsMapCanvas =
+
+[images/tim50x50.png]Tutorial 1 showed you the useage of the QgsMapCanvas api
+to create a simple application that loads a shapefile and displays the points
+in it. But what good is map that you can't interact with? Enter our second
+tutorial where we show you how to use QgsMapTool - the base class for all tools
+that need to interact with the  canvas.
+
+**Updated November 2008 to use cmake build system and the updated QGIS 1.0.0 API. Tim**
+
+[images/tutorial2.jpg]
+
+Today I will extend the last tutorial by making it a QMainWindow application
+with a menu, toolbar and canvas area. The purpose of the tutorial is to provide
+a demonstrator project, so I wont promise to write the most elegant or robust
+C++ code. The project will provide 4 toolbar icons for
+
+
+ - loading a map layer (layer name is hard coded in the application
+ - zooming in
+ - zooming out
+ - panning
+ -
+
+The entire project can be checked out form the QGIS Subversion repository using
+the following command:
+
+```svn co https://svn.osgeo.org/qgis/trunk/code_examples/2_basic_main_window```
+
+
+In the working directory for the tutorial code you will find a number of files
+including c++ sources, icons and a simple data file under data. There is also
+the .ui file for the main window.
+
+**Note:** You will need to edit the .pro file in the above svn directory to
+match your system.
+
+Since much of the code is the same as the previous tutorial, I will focus on
+the MapTool specifics - the rest of the implementation details can be
+investigated by checking out the project form SVN. A QgsMapTool is a class that
+interacts with the MapCanvas using the mouse pointer. QGIS has a number of
+QgsMapTools implemented, and you can subclass QgsMapTool to create your own. In
+mainwindow.cpp you will see I include the headers for the QgsMapTools near the
+start of the file:
+
+```
+     //
+     // QGIS Map tools
+     //
+     #include "qgsmaptoolpan.h"
+     #include "qgsmaptoolzoom.h"
+     //
+     // These are the other headers for available map tools 
+     // (not used in this example)
+     //
+     //#include "qgsmaptoolcapture.h"
+     //#include "qgsmaptoolidentify.h"
+     //#include "qgsmaptoolselect.h"
+     //#include "qgsmaptoolvertexedit.h"
+     //#include "qgsmeasure.h"
+```
+
+As you can see, I am only using two types of MapTool subclasses for this
+tutorial, but there are more available in the QGIS library. Hooking up our
+MapTools to the canvas is very easy using the normal Qt4 signal/slot mechanism:
+
+```
+     //create the action behaviours
+     connect(mActionPan, SIGNAL(triggered()), this, SLOT(panMode()));
+     connect(mActionZoomIn, SIGNAL(triggered()), this, SLOT(zoomInMode()));
+     connect(mActionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOutMode()));
+     connect(mActionAddLayer, SIGNAL(triggered()), this, SLOT(addLayer()));
+```
+
+Next we make a small toolbar to hold our toolbuttons. Note that the mpAction*
+actions were created in designer.
+
+```
+     //create a little toolbar
+     mpMapToolBar = addToolBar(tr("File"));
+     mpMapToolBar->addAction(mpActionAddLayer);
+     mpMapToolBar->addAction(mpActionZoomIn);
+     mpMapToolBar->addAction(mpActionZoomOut);
+     mpMapToolBar->addAction(mpActionPan);
+```
+
+Thats really pretty straightforward Qt stuff too. Now we create our three map
+tools:
+
+```
+     //create the maptools
+     mpPanTool = new QgsMapToolPan(mpMapCanvas);
+     mpPanTool->setAction(mpActionPan);
+     mpZoomInTool = new QgsMapToolZoom(mpMapCanvas, FALSE); // false = in
+     mpZoomInTool->setAction(mpActionZoomIn);
+     mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
+     mpZoomOutTool->setAction(mpActionZoomOut);
+```
+
+Again nothing here is very complicated - we are creating tool instances, each
+of which is associated with the same mapcanvas, and a different QAction. When
+the user selects one of the toolbar icons, the active MapTool for the canvas is
+set. For example when the pan icon is clicked, we do this:
+
+```
+    void MainWindow::panMode()
+    {
+       mpMapCanvas->setMapTool(mpPanTool); 
+    }
+```
+
+
+**Conclusion**
+
+As you can see extending our previous example into something more functional
+using MapTools is really easy and only requires a few lines of code for each
+MapTool you want to provide.
+
+You can check out and build this tutorial using SVN and CMake using the following steps:
+
+```
+svn co https://svn.osgeo.org/qgis/trunk/code_examples/2_basic_main_window
+cd 2_basic_main_window
+mkdir build
+#optionally specify where your QGIS is installed (should work on all platforms)
+#if your QGIS is installed to /usr or /usr/local you can leave this next step out
+export LIB_DIR=/home/timlinux/apps
+cmake ..
+make
+./timtut2
+```
+
+**A final note**
+
+I don't often check the comments on these posts - if you are stuck please
+write to the [QGIS Developer mailing list
+http://qgis.org/content/view/115/96/"]! Thanks.Tim
+
