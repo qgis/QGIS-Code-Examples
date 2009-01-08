@@ -76,7 +76,7 @@ QT4_WRAP_CPP (timtut2_MOC_SRCS  ${timtut2_MOC_HDRS})
 
 QT4_ADD_RESOURCES(timtut2_RCC_SRCS ${timtut2_RCCS})
 
-ADD_EXECUTABLE (timtut2 MODULE ${timtut2_SRCS} ${timtut2_MOC_SRCS} ${timtut2_RCC_SRCS} ${timtut2_UIS_H})
+ADD_EXECUTABLE (timtut2 ${timtut2_SRCS} ${timtut2_MOC_SRCS} ${timtut2_RCC_SRCS} ${timtut2_UIS_H})
 
 INCLUDE_DIRECTORIES(
      ${GDAL_INCLUDE_DIR}
