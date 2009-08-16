@@ -50,9 +50,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 
   // Instantiate Provider Registry
 #if defined(Q_WS_MAC)
+  //
+  // Be sure to set this to an appropriate place if you are on OSX
+  //
   QString myPluginsDir        = "/Users/timsutton/apps/qgis.app/Contents/MacOS/lib/qgis";
 #else
-  QString myPluginsDir        = "/home/timlinux/apps/lib/qgis";
+  //
+  // Be sure to set this to an appropriate place if you are on Linux or windows
+  //
+  QString myPluginsDir        = "/home/timlinux/apps/qgis_trunk/lib/qgis";
 #endif
   QgsProviderRegistry::instance(myPluginsDir);
 
