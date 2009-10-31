@@ -38,7 +38,8 @@ in it. But what good is map that you can't interact with? Enter our second
 tutorial where we show you how to use QgsMapTool - the base class for all tools
 that need to interact with the  canvas.
 
-**Updated November 2008 to use cmake build system and the updated QGIS 1.0.0 API. Tim**
+**Updated November 2008 to use cmake build system and the updated QGIS 1.0.0
+API. Tim**
 
 [images/tutorial2.jpg]
 
@@ -64,9 +65,6 @@ In the working directory for the tutorial code you will find a number of files
 including c++ sources, icons and a simple data file under data. There is also
 the .ui file for the main window.
 
-**Note:** You will need to edit the .pro file in the above svn directory to
-match your system.
-
 Since much of the code is the same as the previous tutorial, I will focus on
 the MapTool specifics - the rest of the implementation details can be
 investigated by checking out the project form SVN. A QgsMapTool is a class that
@@ -76,20 +74,20 @@ mainwindow.cpp you will see I include the headers for the QgsMapTools near the
 start of the file:
 
 ```
-     //
-     // QGIS Map tools
-     //
-     #include "qgsmaptoolpan.h"
-     #include "qgsmaptoolzoom.h"
-     //
-     // These are the other headers for available map tools 
-     // (not used in this example)
-     //
-     //#include "qgsmaptoolcapture.h"
-     //#include "qgsmaptoolidentify.h"
-     //#include "qgsmaptoolselect.h"
-     //#include "qgsmaptoolvertexedit.h"
-     //#include "qgsmeasure.h"
+//
+// QGIS Map tools
+//
+#include "qgsmaptoolpan.h"
+#include "qgsmaptoolzoom.h"
+//
+// These are the other headers for available map tools 
+// (not used in this example)
+//
+//#include "qgsmaptoolcapture.h"
+//#include "qgsmaptoolidentify.h"
+//#include "qgsmaptoolselect.h"
+//#include "qgsmaptoolvertexedit.h"
+//#include "qgsmeasure.h"
 ```
 
 As you can see, I am only using two types of MapTool subclasses for this
@@ -97,36 +95,36 @@ tutorial, but there are more available in the QGIS library. Hooking up our
 MapTools to the canvas is very easy using the normal Qt4 signal/slot mechanism:
 
 ```
-     //create the action behaviours
-     connect(mActionPan, SIGNAL(triggered()), this, SLOT(panMode()));
-     connect(mActionZoomIn, SIGNAL(triggered()), this, SLOT(zoomInMode()));
-     connect(mActionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOutMode()));
-     connect(mActionAddLayer, SIGNAL(triggered()), this, SLOT(addLayer()));
+//create the action behaviours
+connect(mActionPan, SIGNAL(triggered()), this, SLOT(panMode()));
+connect(mActionZoomIn, SIGNAL(triggered()), this, SLOT(zoomInMode()));
+connect(mActionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOutMode()));
+connect(mActionAddLayer, SIGNAL(triggered()), this, SLOT(addLayer()));
 ```
 
 Next we make a small toolbar to hold our toolbuttons. Note that the mpAction*
 actions were created in designer.
 
 ```
-     //create a little toolbar
-     mpMapToolBar = addToolBar(tr("File"));
-     mpMapToolBar->addAction(mpActionAddLayer);
-     mpMapToolBar->addAction(mpActionZoomIn);
-     mpMapToolBar->addAction(mpActionZoomOut);
-     mpMapToolBar->addAction(mpActionPan);
+//create a little toolbar
+mpMapToolBar = addToolBar(tr("File"));
+mpMapToolBar->addAction(mpActionAddLayer);
+mpMapToolBar->addAction(mpActionZoomIn);
+mpMapToolBar->addAction(mpActionZoomOut);
+mpMapToolBar->addAction(mpActionPan);
 ```
 
 Thats really pretty straightforward Qt stuff too. Now we create our three map
 tools:
 
 ```
-     //create the maptools
-     mpPanTool = new QgsMapToolPan(mpMapCanvas);
-     mpPanTool->setAction(mpActionPan);
-     mpZoomInTool = new QgsMapToolZoom(mpMapCanvas, FALSE); // false = in
-     mpZoomInTool->setAction(mpActionZoomIn);
-     mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
-     mpZoomOutTool->setAction(mpActionZoomOut);
+//create the maptools
+mpPanTool = new QgsMapToolPan(mpMapCanvas);
+mpPanTool->setAction(mpActionPan);
+mpZoomInTool = new QgsMapToolZoom(mpMapCanvas, FALSE); // false = in
+mpZoomInTool->setAction(mpActionZoomIn);
+mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
+mpZoomOutTool->setAction(mpActionZoomOut);
 ```
 
 Again nothing here is very complicated - we are creating tool instances, each
@@ -135,10 +133,10 @@ the user selects one of the toolbar icons, the active MapTool for the canvas is
 set. For example when the pan icon is clicked, we do this:
 
 ```
-    void MainWindow::panMode()
-    {
-       mpMapCanvas->setMapTool(mpPanTool); 
-    }
+void MainWindow::panMode()
+{
+  mpMapCanvas->setMapTool(mpPanTool); 
+}
 ```
 
 
@@ -148,12 +146,14 @@ As you can see extending our previous example into something more functional
 using MapTools is really easy and only requires a few lines of code for each
 MapTool you want to provide.
 
-You can check out and build this tutorial using SVN and CMake using the following steps:
+You can check out and build this tutorial using SVN and CMake using the
+following steps:
 
 ```
 svn co https://svn.osgeo.org/qgis/trunk/code_examples/2_basic_main_window
 cd 2_basic_main_window
 mkdir build
+cd build
 #optionally specify where your QGIS is installed (should work on all platforms)
 #if your QGIS is installed to /usr or /usr/local you can leave this next step out
 export LIB_DIR=/home/timlinux/apps
