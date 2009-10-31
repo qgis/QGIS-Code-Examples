@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.6)
 PROJECT(timtut1)
 SET(CMAKE_COLOR_MAKEFILE ON)
 # set path to additional CMake modules
