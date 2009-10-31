@@ -71,13 +71,22 @@ We start with typical adding the neccessary includes for our app:
 ```
 
 
-We use QgsApplication instead of Qt's QApplication, and get some added benifits of various static methods that can be used to locate library paths and so on.
+We use QgsApplication instead of Qt's QApplication, and get some added benifits
+of various static methods that can be used to locate library paths and so on.
 
-The provider registry is a singleton that keeps track of vector data provider plugins. It does all the work for you of loading the plugins and so on. The single symbol renderer is the most basic symbology class. It renders points, lines or polygons in a single colour which is chosen at random by default (though you can set it yourself). Every vector layer must have a symbology associated with it.
+The provider registry is a singleton that keeps track of vector data provider
+plugins. It does all the work for you of loading the plugins and so on. The
+single symbol renderer is the most basic symbology class. It renders points,
+lines or polygons in a single colour which is chosen at random by default
+(though you can set it yourself). Every vector layer must have a symbology
+associated with it.
 
-The map layer registry keeps track of all the layers you are using. The vector layer class inherits from maplayer and extends it to include specialist functionality for vector data.
+The map layer registry keeps track of all the layers you are using. The vector
+layer class inherits from maplayer and extends it to include specialist
+functionality for vector data.
 
-Finally the mapcanvas is really the nub of the matter. Its the drawable widget that our map will be drawn onto.
+Finally the mapcanvas is really the nub of the matter. Its the drawable widget
+that our map will be drawn onto.
 
 Now we can move on to initialising our application....
 
@@ -94,11 +103,18 @@ int main(int argc, char ** argv)
 
 ```
 
-So now we have a qgsapplication and we have defined some variables. Since I tested this on the Ubuntu 8.10, I just specified the location of the vector provider plugins as being inside the my development install directory. It would probaby make more sense in general to keep the QGIS libs in one of the standard library search paths on your system (e.g. /usr/lib) but this way will do for now.
+So now we have a qgsapplication and we have defined some variables. Since I
+tested this on the Ubuntu 8.10, I just specified the location of the vector
+provider plugins as being inside the my development install directory. It would
+probaby make more sense in general to keep the QGIS libs in one of the standard
+library search paths on your system (e.g. /usr/lib) but this way will do for
+now.
 
-The next two variables defined here just point to the shapefile I am going to be using (and you should substitute your own data here).
+The next two variables defined here just point to the shapefile I am going to
+be using (and you should substitute your own data here).
 
-The provider name is important - it tells qgis which data provider to use to load the file. Typically you will use 'ogr' or 'postgres'.
+The provider name is important - it tells qgis which data provider to use to
+load the file. Typically you will use 'ogr' or 'postgres'.
 
 Now we can go on to actually create our layer object.
 
@@ -116,7 +132,8 @@ Now we go on to create a layer...
 ```
   QgsVectorLayer * mypLayer = 
       new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
-  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->geometryType());
+  QgsSingleSymbolRenderer *mypRenderer = new
+       QgsSingleSymbolRenderer(mypLayer->geometryType());
   QList <QgsMapCanvasLayer> myLayerSet;
   
   mypLayer->setRenderer(mypRenderer);
@@ -172,9 +189,11 @@ canvas, make it visible and then refresh it.
 
 ```
 
-In the last step we simply start the Qt event loop and we are all done. Easy as 1-2-3 eh?
+In the last step we simply start the Qt event loop and we are all done. Easy as
+1-2-3 eh?
 
-This example can be checked out of subversion, compiled and run using cmake like this:
+This example can be checked out of subversion, compiled and run using cmake
+like this:
 
 ```
 svn co https://svn.osgeo.org/qgis/trunk/code_examples/1_hello_world_qgis_style
