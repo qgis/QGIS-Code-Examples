@@ -156,6 +156,7 @@ void MainWindow::addLayer()
   //and the label attributes associated with the label
   QgsLabelAttributes * mypLabelAttributes;
   mypLabelAttributes = mypLabel->layerAttributes();
+  //note in QGIS 1.4 and up you should use mypLabel->labelAttributes rather
 
   //get the field list associated with the layer
   //we'll print the names out to console for diagnostic purposes

@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.6)
 PROJECT(timtut3)
 SET(CMAKE_COLOR_MAKEFILE ON)
 # set path to additional CMake modules
@@ -76,7 +77,7 @@ QT4_WRAP_CPP (timtut3_MOC_SRCS  ${timtut3_MOC_HDRS})
 
 QT4_ADD_RESOURCES(timtut3_RCC_SRCS ${timtut3_RCCS})
 
-ADD_EXECUTABLE (timtut3 MODULE ${timtut3_SRCS} ${timtut3_MOC_SRCS} ${timtut3_RCC_SRCS} ${timtut3_UIS_H})
+ADD_EXECUTABLE (timtut3 ${timtut3_SRCS} ${timtut3_MOC_SRCS} ${timtut3_RCC_SRCS} ${timtut3_UIS_H})
 
 INCLUDE_DIRECTORIES(
      ${GDAL_INCLUDE_DIR}

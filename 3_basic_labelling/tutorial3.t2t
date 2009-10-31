@@ -42,7 +42,7 @@ look at labelling features.
 
 Before I carry on too far, note that QGIS's automatic labelling algorithm is
 very primative. Martin Dobias is planning to implement a much more useful label
-placement routine - but its not going to be available in QGIS 0.8. For the best
+placement routine - but its not available at the time of writing this. For the best
 label placement results you should defined fields in your attribute table for
 position, rotation etc of the label. Since this is only intended to be a 'get
 you started' introduction, I won't be doing all that here...
@@ -198,6 +198,7 @@ following steps:
 svn co https://svn.osgeo.org/qgis/trunk/code_examples/3_basic_labelling
 cd 3_basic_labelling
 mkdir build
+cd build
 #optionally specify where your QGIS is installed (should work on all platforms)
 #if your QGIS is installed to /usr or /usr/local you can leave this next step out
 export LIB_DIR=/home/timlinux/apps
