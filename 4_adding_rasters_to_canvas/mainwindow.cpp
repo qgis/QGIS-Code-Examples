@@ -34,10 +34,6 @@
 //
 #include "qgsmaptoolpan.h"
 #include "qgsmaptoolzoom.h"
-//
-// Std Includes
-//
-#include <deque.h>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
     : QMainWindow(parent,fl)
@@ -47,9 +43,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 
   // Create the Map Canvas
   mpMapCanvas= new QgsMapCanvas(0, 0);
-  qDebug(mpMapCanvas->extent().stringRep(2));
   mpMapCanvas->enableAntiAliasing(true);
-  mpMapCanvas->useQImageToRender(false);
+  mpMapCanvas->useImageToRender(false);
   mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
   mpMapCanvas->freeze(false);
   mpMapCanvas->setVisible(true);
@@ -123,12 +118,14 @@ void MainWindow::addLayer()
     return; 
   }
   
-  // use this line for a grayscale image (will be rendered as pseudocolor)
-  mypLayer->setDrawingStyle(QgsRasterLayer::SINGLE_BAND_PSEUDO_COLOR);
-  //or use this line for an RGB image
-  //mypLayer->setDrawingStyle(QgsRasterLayer::MULTI_BAND_COLOR);
+  // render strategy for grayscale image (will be rendered as pseudocolor)
+  mypLayer->setDrawingStyle( QgsRasterLayer::SingleBandPseudoColor );
+  mypLayer->setColorShadingAlgorithm( QgsRasterLayer::PseudoColorShader );
+  mypLayer->setContrastEnhancementAlgorithm(
+    QgsContrastEnhancement::StretchToMinimumMaximum, false );
+  mypLayer->setMinimumValue( mypLayer->grayBandName(), 0.0, false );
+  mypLayer->setMaximumValue( mypLayer->grayBandName(), 10.0 );
   
-  mypLayer->setColorRampingType(QgsRasterLayer::BLUE_GREEN_RED);
 
   // Add the Vector Layer to the Layer Registry
   QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
