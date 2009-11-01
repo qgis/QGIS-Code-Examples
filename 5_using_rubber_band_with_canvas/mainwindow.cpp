@@ -36,10 +36,6 @@
 //
 #include "qgsmaptoolpan.h"
 #include "qgsmaptoolzoom.h"
-//
-// Std Includes
-//
-#include <deque.h>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
     : QMainWindow(parent,fl)
@@ -58,9 +54,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 
   // Create the Map Canvas
   mpMapCanvas= new QgsMapCanvas(0, 0);
-  qDebug(mpMapCanvas->extent().stringRep(2));
   mpMapCanvas->enableAntiAliasing(true);
-  mpMapCanvas->useQImageToRender(false);
   mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
   mpMapCanvas->freeze(false);
   mpMapCanvas->setVisible(true);
@@ -124,7 +118,7 @@ void MainWindow::zoomOutMode()
 }
 void MainWindow::addLayer()
 {
-  QFileInfo myRasterFileInfo("data/Abarema_jupunba_projection.tif");
+  QFileInfo myRasterFileInfo("../data/Abarema_jupunba_projection.tif");
   QgsRasterLayer * mypLayer = new QgsRasterLayer(myRasterFileInfo.filePath(), 
       myRasterFileInfo.completeBaseName());
   if (mypLayer->isValid())
@@ -136,20 +130,25 @@ void MainWindow::addLayer()
     qDebug("Layer is NOT valid");
     return;
   }
-  mypLayer->setColorRampingType(QgsRasterLayer::BLUE_GREEN_RED);
-  mypLayer->setDrawingStyle(QgsRasterLayer::SINGLE_BAND_PSEUDO_COLOR);
-  std::deque<QString> myLayerSet;
+  // render strategy for grayscale image (will be rendered as pseudocolor)
+  mypLayer->setDrawingStyle( QgsRasterLayer::SingleBandPseudoColor );
+  mypLayer->setColorShadingAlgorithm( QgsRasterLayer::PseudoColorShader );
+  mypLayer->setContrastEnhancementAlgorithm(
+    QgsContrastEnhancement::StretchToMinimumMaximum, false );
+  mypLayer->setMinimumValue( mypLayer->grayBandName(), 0.0, false );
+  mypLayer->setMaximumValue( mypLayer->grayBandName(), 10.0 );
+  //create a layerset
+  QList<QgsMapCanvasLayer> myList;
+  // Add the layers to the Layer Set
+  myList.append(QgsMapCanvasLayer(mypLayer, TRUE));//bool visibility
+  // set the canvas to the extent of our layer
+  mpMapCanvas->setExtent(mypLayer->extent());
 
   // Add the Vector Layer to the Layer Registry
   QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
 
-  // Add the Layer to the Layer Set
-  myLayerSet.push_back(mypLayer->getLayerID());
-  mypLayer->setVisible(TRUE);
-  // set teh canvas to the extent of our layer
-  mpMapCanvas->setExtent(mypLayer->extent());
   // Set the Map Canvas Layer Set
-  mpMapCanvas->setLayerSet(myLayerSet);
+  mpMapCanvas->setLayerSet(myList);
 }
 void MainWindow::on_mpToolShowRubberBand_clicked()
 {
