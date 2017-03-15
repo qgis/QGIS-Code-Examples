@@ -1,0 +1,36 @@
+QGIS Developer Tutorials
+
+Tim Sutton, 2008
+
+%! target       : html
+%! style        : style.css
+%! Options      : --toc --toc-level 3 --enum-title --css-sugar --css-inside
+%! preproc      : TUT_URL   https://qgis.org
+%! PostProc(html): '(?i)(```)' '<div class="code">\1'
+%! PostProc(html): '(?i)(```)' '\1</div>'
+%! encoding: iso-8859-1
+% These are comments and will not be generated in any output
+% -------------------
+%This document is in text2tags format. You can generate html, plain text and
+%moinmoin formatted documentation by running txt2tags on this document. See the
+%txt2tags home page for more details.  Please insert manual line breaks in this
+%document as it makes diffing for changes much easier. To do this in vim 
+%automatically, select a section then issue (gq) command. Please dont
+%apply vim formatting to the whol document as it screws up some formatting
+%rather apply it selectively to paragraphs where needed.
+% To generate the text version of this document:
+%
+% Make sure you are in the top level code examples dir
+% since image paths are referenced from there:
+%
+% txt2tags -t txt -o tutorial1 1_hello_world_qgis_style/tutorial1.t2t
+% To generate the moinmoin version of this document
+% txt2tags -t moin -o tutorial1.moin  1_hello_world_qgis_style/tutorial1.t2t
+% To generate the html version of this document
+% txt2tags -t html -o tutorial1.html 1_hello_world_qgis_style/tutorial1.t2t
+% End of comments
+% -------------------
+
+= Tutorial 0 - Hello World, Qt style =
+
+
