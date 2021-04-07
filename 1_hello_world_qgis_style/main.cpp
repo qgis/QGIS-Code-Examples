@@ -1,35 +1,39 @@
 //
-// QGIS Includes
-//
-#include <qgsapplication.h>
-#include <qgsproviderregistry.h>
-#include <qgssinglesymbolrenderer.h>
-#include <qgsmaplayerregistry.h>
-#include <qgsvectorlayer.h>
-#include <qgsmapcanvas.h>
-//
 // Qt Includes
 //
 #include <QString>
 #include <QApplication>
 #include <QWidget>
+#include <QJsonObject>
+#include <QDomDocument>
+//
+// QGIS Includes
+//
+#include <qgsapplication.h>
+#include <qgsproviderregistry.h>
+#include <qgssinglesymbolrenderer.h>
+#include <qgsproject.h>
+#include <qgsvectorlayer.h>
+#include <qgssymbol.h>
+#include <qgsmapcanvas.h>
+
 
 int main(int argc, char ** argv) 
 {
   // Start the Application
   QgsApplication app(argc, argv, true);
 
-  QString myPluginsDir        = "/home/timlinux/apps/lib/qgis";
-  QString myLayerPath         = "/home/timlinux/gisdata/brazil/BR_Cidades/";
-  QString myLayerBaseName     = "Brasil_Cap";
+  QString myPluginsDir        = "/usr/lib/qgis/";
+  QString myLayerPath         = "/home/thomasg/ne_10m_admin_0_countries.shp";
+  QString myLayerBaseName     = "Countries";
   QString myProviderName      = "ogr";
   // Instantiate Provider Registry
   QgsProviderRegistry::instance(myPluginsDir);
   // create a maplayer instance
   QgsVectorLayer * mypLayer = 
       new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
-  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->geometryType());
-  QList <QgsMapCanvasLayer> myLayerSet;
+  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(QgsSymbol::defaultSymbol(mypLayer->geometryType()));
+  QList <QgsMapLayer *> layers;
   mypLayer->setRenderer(mypRenderer);
   if (mypLayer->isValid())
   {
@@ -41,23 +45,21 @@ int main(int argc, char ** argv)
   }
 
   // Add the Vector Layer to the Layer Registry
-  QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
+  QgsProject::instance()->addMapLayer(mypLayer);
   // Add the Layer to the Layer Set
-  myLayerSet.append(QgsMapCanvasLayer(mypLayer, TRUE));
+  layers.append(mypLayer);
 
   // Create the Map Canvas
-  QgsMapCanvas * mypMapCanvas = new QgsMapCanvas(0, 0);
+  QgsMapCanvas * mypMapCanvas = new QgsMapCanvas();
   mypMapCanvas->setExtent(mypLayer->extent());
   mypMapCanvas->enableAntiAliasing(true);
   mypMapCanvas->setCanvasColor(QColor(255, 255, 255));
   mypMapCanvas->freeze(false);
   // Set the Map Canvas Layer Set
-  mypMapCanvas->setLayerSet(myLayerSet);
+  mypMapCanvas->setLayers(layers);
   mypMapCanvas->setVisible(true);
   mypMapCanvas->refresh();
 
   // Start the Application Event Loop
   return app.exec();
 }
-
-
