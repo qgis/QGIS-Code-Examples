@@ -17,7 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+//
+//Qt related
+//
 #include "mainwindow.h"
+#include "qtoolbar.h"
+
 //
 // QGIS Includes
 //
@@ -25,9 +30,17 @@
 #include <qgsproviderregistry.h>
 #include <qgsvectordataprovider.h>
 #include <qgssinglesymbolrenderer.h>
-#include <qgsmaplayerregistry.h>
+#include <qgsproject.h>
 #include <qgsvectorlayer.h>
 #include <qgsmapcanvas.h>
+#include <qgssymbol.h>
+#include <qgsvectorlayerlabeling.h>
+#include <qgsfontutils.h>
+#include <qgstextformat.h>
+#include <qgspallabeling.h>
+#include <qgsrasterlayer.h>
+#include <qgscoordinatereferencesystem.h>
+
 //
 // QGIS Map tools
 //
@@ -42,14 +55,8 @@
 //#include "qgsmaptoolvertexedit.h"
 //#include "qgsmeasure.h"
 
-//
-//Labelling related
-//
-#include <qgslabel.h>
-#include <qgslabelattributes.h>
-#include <qgsfield.h>
 
-MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags fl)
     : QMainWindow(parent,fl)
 {
   //required by Qt4 to initialise the ui
@@ -59,15 +66,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 #if defined(Q_WS_MAC)
   QString myPluginsDir        = "/Users/timsutton/apps/qgis.app/Contents/MacOS/lib/qgis";
 #else
-  QString myPluginsDir        = "/home/timlinux/apps/lib/qgis";
+  QString myPluginsDir        = "/usr/lib/qgis";
 #endif
   QgsProviderRegistry::instance(myPluginsDir);
 
 
   // Create the Map Canvas
-  mpMapCanvas= new QgsMapCanvas(0, 0);
+  mpMapCanvas= new QgsMapCanvas();
   mpMapCanvas->enableAntiAliasing(true);
-  mpMapCanvas->useImageToRender(false);
   mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
   mpMapCanvas->freeze(false);
   mpMapCanvas->setVisible(true);
@@ -94,9 +100,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   //create the maptools
   mpPanTool = new QgsMapToolPan(mpMapCanvas);
   mpPanTool->setAction(mpActionPan);
-  mpZoomInTool = new QgsMapToolZoom(mpMapCanvas, FALSE); // false = in
+  mpZoomInTool = new QgsMapToolZoom(mpMapCanvas, false); // false = in
   mpZoomInTool->setAction(mpActionZoomIn);
-  mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
+  mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, true ); //true = out
   mpZoomOutTool->setAction(mpActionZoomOut);
 }
 
@@ -125,8 +131,8 @@ void MainWindow::zoomOutMode()
 }
 void MainWindow::addLayer()
 {
-  QString myLayerPath         = "../data";
-  QString myLayerBaseName     = "test";
+  QString myLayerPath         = "/home/thomasg/ne_10m_admin_0_countries.shp";
+  QString myLayerBaseName     = "Countries";
   QString myProviderName      = "ogr";
   
   QgsVectorLayer * mypLayer = new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
@@ -142,41 +148,37 @@ void MainWindow::addLayer()
   }
   
   //set up a renderer for the layer
-  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->geometryType());
-  QList<QgsMapCanvasLayer> myLayerSet;
+  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(QgsSymbol::defaultSymbol(mypLayer->geometryType()));
+  QList <QgsMapLayer *> layers;
   mypLayer->setRenderer(mypRenderer);
   
   //
   //set up labelling for the layer
   //
+  QgsPalLayerSettings labelSettings;
+    labelSettings.fieldName = QStringLiteral( "NAME" );
+  QgsTextFormat format;
+  format.setFont( QgsFontUtils::getStandardTestFont( QStringLiteral( "Bold" ) ).family() );
+  format.setSize( 12 );
+  format.setNamedStyle( QStringLiteral( "Bold" ) );
+  format.setColor( QColor( 200, 0, 200 ) );
+  labelSettings.setFormat( format );
 
   //get the label instance associated with the layer
-  QgsLabel * mypLabel;
-  mypLabel = mypLayer->label();
+  mypLayer->setLabeling(new QgsVectorLayerSimpleLabeling(labelSettings));
+  mypLayer->setLabelsEnabled(true);
   //and the label attributes associated with the label
-  QgsLabelAttributes * mypLabelAttributes;
-  mypLabelAttributes = mypLabel->layerAttributes();
-  //note in QGIS 1.4 and up you should use mypLabel->labelAttributes rather
 
   //get the field list associated with the layer
   //we'll print the names out to console for diagnostic purposes
-  QgsFieldMap myFields = mypLayer->dataProvider()->fields();
-  for (unsigned int i = 0; i < myFields.size(); i++ )
-  {
-    qDebug("Field Name: " +  QString(myFields[i].name()).toLocal8Bit() );
-  }
+  // QgsFieldMap myFields = mypLayer->dataProvider()->fields();
+  // for (unsigned int i = 0; i < myFields.size(); i++ )
+  // {
+  //   qDebug("Field Name: " +  QString(myFields[i].name()).toLocal8Bit() );
+  // }
   //just use the last field's name in the fields list as the label field! 
-  qDebug("set label field to " + QString(myFields[myFields.size()-1].name()).toLocal8Bit());
-  mypLabel->setLabelField( QgsLabel::Text,  myFields.size()-1);
-  //set the colour of the label text
-  mypLabelAttributes->setColor(Qt::black);
-  //create a 'halo' effect around each label so it
-  //can still be read on dark backgrounds
-  mypLabelAttributes->setBufferEnabled(true);
-  mypLabelAttributes->setBufferColor(Qt::yellow);
-  int myType = QgsLabelAttributes::PointUnits;
-  mypLabelAttributes->setBufferSize(1,myType);
-  
+  // qDebug("set label field to " + QString(myFields[myFields.size()-1].name()).toLocal8Bit());
+ 
   /*
    * Here are a bunch of other things you can set based on values on a database field
    * the second parameter in each case would be the field name from which the 
@@ -196,16 +198,32 @@ void MainWindow::addLayer()
   */
   
   //lastly we enable labelling!
-  mypLayer->enableLabels(true);
+  // mypLayer->enableLabels(true);
   
   // Add the Vector Layer to the Layer Registry
-  QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
+  QgsProject::instance()->addMapLayer(mypLayer, true);
 
   // Add the Layer to the Layer Set
-  myLayerSet.append(QgsMapCanvasLayer( mypLayer ) );
+  layers.append( mypLayer );
+
+  QString url = "type=xyz&url=https://a.tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png&zmax=19&zmin=0&zmin=0";
+  // url.append("/%7Bz%7D/%7Bx%7D/%7By%7D.png&zmax=19&zmin=0&crs=EPSG3857");
+  // QgsCoordinateReferenceSystem *crs = new QgsCoordinateReferenceSystem("EPSG:3857");
+  mpMapCanvas->setDestinationCrs(* new QgsCoordinateReferenceSystem("EPSG:3857"));
+  QgsRasterLayer *ras = new QgsRasterLayer(url, "OpenStreetMap", "wms");
+  ras->setCrs(* new QgsCoordinateReferenceSystem("EPSG:3857"));
+  // if (ras->isValid())
+  // {
+  //   qDebug("Raster layer is valid");
+  // }
+  // else
+  // {
+  //   qDebug("Raster layer is NOT valid");
+  //   return;
+  // }
+  // layers.append( ras );
   // set teh canvas to the extent of our layer
   mpMapCanvas->setExtent(mypLayer->extent());
   // Set the Map Canvas Layer Set
-  mpMapCanvas->setLayerSet(myLayerSet);
+  mpMapCanvas->setLayers(layers);
 }
-
