@@ -97,7 +97,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags fl)
   //create the rubber band
   mpRubberBand = new QgsRubberBand(mpMapCanvas, QgsWkbTypes::PolygonGeometry );
   mpRubberBand->setVisible( true );
-  qDebug("After show ruberband");
 }
 
 MainWindow::~MainWindow()
@@ -192,11 +191,8 @@ void MainWindow::addLayer()
 }
 void MainWindow::on_mpToolShowRubberBand_clicked()
 {
-  qDebug("Begin show ruberband");
   QgsPointXY myPoint1 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(10.0, 10.0);
-  qDebug("Intermediate 1 ruberband");
   mpRubberBand->addPoint(myPoint1);
-  qDebug("Intermediate 2 ruberband");
   QgsPointXY myPoint2 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(20.0, 10.0);
   mpRubberBand->addPoint(myPoint2);
   QgsPointXY myPoint3 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(20.0, 20.0);
@@ -205,14 +201,9 @@ void MainWindow::on_mpToolShowRubberBand_clicked()
   mpRubberBand->addPoint(myPoint4);
   QgsPointXY myPoint5 = mpMapCanvas->getCoordinateTransform()->toMapCoordinates(10.0, 10.0);
   mpRubberBand->addPoint(myPoint5);
-  qDebug("End show ruberband");
 }
 void MainWindow::on_mpToolHideRubberBand_clicked()
 {
-  qDebug("Reset 1 Ruberband");
   mpRubberBand->reset(QgsWkbTypes::PolygonGeometry);
-  qDebug("Reset 2 Ruberband");
   mpRubberBand->setVisible( false );
-  qDebug("Reset 3 Ruberband");
-
 }
