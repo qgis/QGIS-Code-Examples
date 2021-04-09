@@ -26,6 +26,8 @@
 
 //QT Includes
 #include <QtGui>
+#include <QWidget>
+#include <qtoolbar.h>
 
 //Local Includes
 #include <ui_mainwindowbase.h>
@@ -37,7 +39,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowBase
 {
   Q_OBJECT;
     public:
-      MainWindow(QWidget* parent = 0, Qt::WFlags fl = 0 );
+      MainWindow(QWidget* parent = 0, Qt::WindowFlags fl = 0 );
       ~MainWindow();
     public slots:
       void zoomInMode();

@@ -18,15 +18,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "mainwindow.h"
+
 //
 // QGIS Includes
 //
 #include <qgsapplication.h>
 #include <qgsproviderregistry.h>
 #include <qgssinglesymbolrenderer.h>
-#include <qgsmaplayerregistry.h>
+#include <qgsproject.h>
 #include <qgsvectorlayer.h>
 #include <qgsmapcanvas.h>
+#include <qgssymbol.h>
 //
 // QGIS Map tools
 //
@@ -42,7 +44,7 @@
 //#include "qgsmeasure.h"
 //
 
-MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags fl)
     : QMainWindow(parent,fl)
 {
   //required by Qt4 to initialise the ui
@@ -58,15 +60,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   //
   // Be sure to set this to an appropriate place if you are on Linux or windows
   //
-  QString myPluginsDir        = "/home/timlinux/apps/qgis_trunk/lib/qgis";
+  QString myPluginsDir        = "/usr/lib/qgis";
 #endif
   QgsProviderRegistry::instance(myPluginsDir);
 
 
   // Create the Map Canvas
-  mpMapCanvas= new QgsMapCanvas(0, 0);
+  mpMapCanvas= new QgsMapCanvas();
   mpMapCanvas->enableAntiAliasing(true);
-  mpMapCanvas->useImageToRender(false);
   mpMapCanvas->setCanvasColor(QColor(255, 255, 255));
   mpMapCanvas->freeze(false);
   mpMapCanvas->setVisible(true);
@@ -93,9 +94,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   //create the maptools
   mpPanTool = new QgsMapToolPan(mpMapCanvas);
   mpPanTool->setAction(mpActionPan);
-  mpZoomInTool = new QgsMapToolZoom(mpMapCanvas, FALSE); // false = in
+  mpZoomInTool = new QgsMapToolZoom(mpMapCanvas, false); // false = in
   mpZoomInTool->setAction(mpActionZoomIn);
-  mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, TRUE ); //true = out
+  mpZoomOutTool = new QgsMapToolZoom(mpMapCanvas, true ); //true = out
   mpZoomOutTool->setAction(mpActionZoomOut);
 }
 
@@ -124,13 +125,13 @@ void MainWindow::zoomOutMode()
 }
 void MainWindow::addLayer()
 {
-  QString myLayerPath         = "../data";
-  QString myLayerBaseName     = "test";
+  QString myLayerPath         = "/home/thomasg/ne_10m_admin_0_countries.shp";
+  QString myLayerBaseName     = "Countries";
   QString myProviderName      = "ogr";
   
   QgsVectorLayer * mypLayer = new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
-  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(mypLayer->geometryType());
-  QList<QgsMapCanvasLayer> myLayerSet;
+  QgsSingleSymbolRenderer *mypRenderer = new QgsSingleSymbolRenderer(QgsSymbol::defaultSymbol(mypLayer->geometryType()));
+  QList <QgsMapLayer *> layers;
   mypLayer->setRenderer(mypRenderer);
 
   if (mypLayer->isValid())
@@ -142,14 +143,13 @@ void MainWindow::addLayer()
     qDebug("Layer is NOT valid");
     return;
   }
-  // Add the Vector Layer to the Layer Registry
-  QgsMapLayerRegistry::instance()->addMapLayer(mypLayer, TRUE);
+  // Add the Vector Layer to the Project Registry
+  QgsProject::instance()->addMapLayer(mypLayer, true);
 
   // Add the Layer to the Layer Set
-  myLayerSet.append(QgsMapCanvasLayer(mypLayer));
+  layers.append(mypLayer);
   // set the canvas to the extent of our layer
   mpMapCanvas->setExtent(mypLayer->extent());
-  // Set the Map Canvas Layer Set
-  mpMapCanvas->setLayerSet(myLayerSet);
+  // Set the Map Canvas Layers
+  mpMapCanvas->setLayers(layers);
 }
-

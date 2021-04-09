@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT(timtut2)
 SET(CMAKE_COLOR_MAKEFILE ON)
 # set path to additional CMake modules
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_find_rules ${CMAKE_MODULE_PATH})
+SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 FIND_PACKAGE(QGIS REQUIRED)
 IF (NOT QGIS_FOUND)
   MESSAGE (SEND_ERROR "QGIS dependency was not found!")
@@ -66,16 +66,17 @@ SET (QT_USE_QTSQL TRUE)
 SET (QT_USE_QTSVG TRUE)
 SET (QT_USE_QTXML TRUE)
 SET (QT_USE_QTNETWORK TRUE)
-FIND_PACKAGE(Qt4 REQUIRED)
-INCLUDE( ${QT_USE_FILE} )
+FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Widgets Xml)
+
+# INCLUDE( ${QT_USE_FILE} )
 ########################################################
 # Build
 
-QT4_WRAP_UI (timtut2_UIS_H  ${timtut2_UIS})
+QT5_WRAP_UI (timtut2_UIS_H  ${timtut2_UIS})
 
-QT4_WRAP_CPP (timtut2_MOC_SRCS  ${timtut2_MOC_HDRS})
+QT5_WRAP_CPP (timtut2_MOC_SRCS  ${timtut2_MOC_HDRS})
 
-QT4_ADD_RESOURCES(timtut2_RCC_SRCS ${timtut2_RCCS})
+QT5_ADD_RESOURCES(timtut2_RCC_SRCS ${timtut2_RCCS})
 
 ADD_EXECUTABLE (timtut2 ${timtut2_SRCS} ${timtut2_MOC_SRCS} ${timtut2_RCC_SRCS} ${timtut2_UIS_H})
 
@@ -88,17 +89,14 @@ INCLUDE_DIRECTORIES(
      .
 )
 
-#This is probably no longer needed, but I will leave it in for Win machines for the moment
-IF(QT_QTSQL_FOUND)
- FIND_LIBRARY(QT_QTSQL_LIBRARY NAMES QtSql QtSql4 PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
- SET(QT_LIBRARIES ${QT_LIBRARIES} ${QT_QTSQL_LIBRARY})
-ENDIF(QT_QTSQL_FOUND)
-
 TARGET_LINK_LIBRARIES(timtut2
-  ${QT_LIBRARIES}
+  Qt5::Core
+  Qt5::Widgets
+  Qt5::Xml
   ${QGIS_CORE_LIBRARY} 
   ${QGIS_GUI_LIBRARY}
-  ${GEOS_LIBRARY}
+  ${GEOS_LIBRARY}
+
   ${GDAL_LIBRARY}
 )
 
@@ -112,5 +110,3 @@ ENDIF (MSVC)
 
 ########################################################
 # Install
-
-
