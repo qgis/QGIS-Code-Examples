@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags fl)
   mpZoomOutTool->setAction(mpActionZoomOut);
 
   //create the rubber band
-  QgsRubberBand *mpRubberBand = new QgsRubberBand(mpMapCanvas, QgsWkbTypes::PolygonGeometry );
+  mpRubberBand = new QgsRubberBand(mpMapCanvas, QgsWkbTypes::PolygonGeometry );
   mpRubberBand->setVisible( true );
   qDebug("After show ruberband");
 }
