@@ -1,14 +1,19 @@
 TEMPLATE = app
 TARGET = qgis_example6
-QT = qt3support sql opengl network svg gui core xml
+QT = sql opengl network svg gui core xml
+#QMAKE_CC = gcc-8
+#QMAKE_CXX = g++-8
 LANGUAGE= C++
 linux-g++{
-  QGISDIR=[path to installed qgis]
+  QGISDIR=/usr
   QGISLIBDIR=$${QGISDIR}/lib
   QGISSRCDIR=[path to qgis src directory]
   QGISPLUGINDIR=$${QGISLIBDIR}/qgis
   DEFINES += QGISPLUGINDIR=$${QGISPLUGINDIR}
   LIBS = -L$${QGISLIBDIR} -lqgis_core -lproj -lqgis_gui
+  # Below was better working on my machine due to error in linker e.g 
+  # undefined reference to `std::thread::_State::~_State()@GLIBCXX_3.4.22'
+  # LIBS = -L$${QGISLIBDIR}/x86_64-linux-gnu -lqgis_core -lproj -lqgis_gui
 }
 macx{
   QGISDIR=/Users/timsutton/apps/qgis.app/Contents/MacOS/
@@ -24,6 +29,7 @@ macx{
 INCLUDEPATH = $${QGISDIR}/include/qgis \
               $${QGISSRCDIR}/core \
               $${QGISSRCDIR}/gui \
+              $${QGISSRCDIR}/analysis \
               $${QGISSRCDIR}/plugins \
               $${QGISSRCDIR}/providers \
               $${QGISSRCDIR}/raster \

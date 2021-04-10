@@ -23,14 +23,13 @@
 //
 #include <qgsapplication.h>
 #include <qgsfeature.h>
-#include <qgsfeatureattribute.h>
 #include <qgsfield.h>
 #include <qgsproviderregistry.h>
 #include <qgsvectordataprovider.h>
 #include <qgsvectorlayer.h>
 
 
-MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags fl)
     : QMainWindow(parent,fl)
 {
   //required by Qt4 to initialise the ui
@@ -40,7 +39,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 #if defined(Q_WS_MAC)
   QString myPluginsDir        = "/Users/timsutton/apps/qgis.app/Contents/MacOS/lib/qgis";
 #else
-  QString myPluginsDir        = "/home/timlinux/apps/lib/qgis";
+  QString myPluginsDir        = "/usr/lib/qgis";
 #endif
   QgsProviderRegistry::instance(myPluginsDir);
 
@@ -53,8 +52,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::addLayer()
 {
-  QString myLayerPath         = "data";
-  QString myLayerBaseName     = "test";
+  QString myLayerPath         = "/home/thomasg/ne_10m_admin_0_countries.shp";
+  QString myLayerBaseName     = "Countries";
   QString myProviderName      = "ogr";
 
   QgsVectorLayer * mypLayer = new QgsVectorLayer(myLayerPath, myLayerBaseName, myProviderName);
@@ -70,17 +69,17 @@ void MainWindow::addLayer()
   }
 
   //get the field list associated with the layer
-  std::vector<QgsField> myFields = mypLayer->fields();
+  QList<QgsField> myFields = mypLayer->fields().toList();
   //we will hold the list of attributes in this string
   QString myString;
   //print out the field names first
-  for (unsigned int i = 0; i < myFields.size(); i++ )
+  for (int i = 0; i < myFields.size(); i++ )
   {
     //a little logic so we can produce output like : 
     // "foo","bar","etc"
     if (i==0)
     {
-      //                 here is where we actually get the field value
+      // here is where we actually get the field value
       myString = "\"" +  myFields[i].name().trimmed() + "\"";
     }
     else
@@ -91,38 +90,34 @@ void MainWindow::addLayer()
   textBrowser->append("Field List: " + myString);
   //get the provider associated with the layer
   //the provider handles data io and is a plugin in qgis.
-  QgsVectorDataProvider* mypProvider=mypLayer->getDataProvider();
+  QgsVectorDataProvider *mypProvider=mypLayer->dataProvider();
   //check the provider is valid
-  if(mypProvider)
+  QgsFeatureIterator fi = mypProvider->getFeatures();
+
+  //create a holder for retrieving features from the provider
+  QgsFeature mypFeature;
+  while ( fi.nextFeature( mypFeature ) )
   {
-    //create a holder for retrieving features from the provider
-    QgsFeature *mypFeature;
-    //get the provider ready to iterate through it
-    mypProvider->reset();
-    //now iterate through each feature
-    while ((mypFeature = mypProvider->getNextFeature(true)))
+
+    //get the attributes of this feature
+    QVector<QVariant> myAttributes = mypFeature.attributes();
+    //now loop through the attributes
+    for (int i = 0; i < myAttributes.count(); i++)
     {
-      //get the attributes of this feature
-      const std::vector < QgsFeatureAttribute >& myAttributes = mypFeature->attributeMap();
-      //now loop through the attributes
-      for (int i = 0; i < myAttributes.size(); i++)
+      QString val = myAttributes[i].toString().trimmed();
+      // qDebug("%s", val.trimmed().toUtf8().constData());
+      //a little logic so we can produce output like : 
+      // "foo","bar","etc"
+      if (i==0)
       {
-        //a little logic so we can produce output like : 
-        // "foo","bar","etc"
-        if (i==0)
-        {
-          //                 here is where we actually get the field value
-          myString = "\"" +  myAttributes[i].fieldValue().trimmed() + "\"";
-        }
-        else
-        {
-          myString += ",\"" +  myAttributes[i].fieldValue().trimmed() + "\"";
-        }
+        // here is where we actually get the field value
+        myString = "\"" + val + "\"";
       }
-      textBrowser->append("Field Values: " + myString); 
-      //clean up before moving on to the next feature
-      delete mypFeature;
+      else
+      {
+        myString += ",\"" + val + "\"";
+      }
     }
+    textBrowser->append("Field Values: \n" + myString);
   }
 }
-

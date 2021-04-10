@@ -30,7 +30,7 @@
 int main(int argc, char ** argv) 
 {
   // Start the Application
-  QgsApplication app(argc, argv, TRUE);
+  QgsApplication app(argc, argv, true);
   MainWindow * mypMainWindow = new MainWindow();
   mypMainWindow->show();
   // Start the Application Event Loop
